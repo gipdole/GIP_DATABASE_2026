@@ -1,0 +1,9 @@
+.selected-row {
+  background-color: #f1f8e9 !important;
+}
+.hovered-row {
+  background-color: #e0f7fa !important;
+}
+.active-row {
+  background-color: #e3f2fd !important;
+}
