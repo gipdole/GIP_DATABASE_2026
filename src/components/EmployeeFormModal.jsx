@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
-  TextField, Button, Stack, MenuItem, Typography, Box
+  TextField, Button, Stack, MenuItem, Typography, Box, Grid
 } from '@mui/material';
 
 import { addEmployee, updateEmployee } from '../utils/firebaseHelpers';
@@ -22,8 +22,20 @@ const defaultForm = {
   contactNumber: '',
   email: '',
   educationalAttainment: '',
-  degree: '',
-  school: '',
+
+  primaryDegree: '',
+  primarySchool: '',
+  primaryYear: '',
+  secondaryDegree: '',
+  secondarySchool: '',
+  secondaryYear: '',
+  seniorHighDegree: '',
+  seniorHighSchool: '',
+  seniorHighYear: '',
+  collegeDegree: '',
+  collegeSchool: '',
+  collegeYear: '',
+
   workCompany: '',
   workPosition: '',
   workPeriod: '',
@@ -47,7 +59,7 @@ const defaultForm = {
 const LGU_OPTIONS = [
   'N/A', 'ATOK', 'BAGUIO CITY', 'BAKUN', 'BENGUET', 'BOKOD', 'BUGUIAS',
   'ITOGON', 'KABAYAN', 'KAPANGAN', 'KIBUNGAN', 'MANKAYAN',
-  'REGIONAL OFFICE', 'SABLAN', 'TUBA', 'TUBLAY'
+  'LA TRINIDAD', 'SABLAN', 'TUBA', 'TUBLAY'
 ];
 
 const GENDER_OPTIONS = ['Male', 'Female', 'Other'];
@@ -65,8 +77,8 @@ const calculateAge = (birthDateStr) => {
 
 const SectionBox = ({ title, children }) => (
   <Box sx={{ border: '1px solid black', borderRadius: 2, overflow: 'hidden', mb: 2 }}>
-    <Box sx={{ backgroundColor: '#2196f3', px: 2, py: 1 }}>
-      <Typography variant="h6" sx={{ color: '#fff', fontWeight: 'bold' }}>{title}</Typography>
+    <Box sx={{ backgroundColor: '#55C386', px: 2, py: 1 }}>
+      <Typography variant="h6" sx={{ color: '#000000', fontWeight: 'bold' }}>{title}</Typography>
     </Box>
     <Box sx={{ p: 2 }}>{children}</Box>
   </Box>
@@ -78,7 +90,8 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
 
   useEffect(() => {
     if (isEditMode && employee) {
-      setForm({ ...defaultForm, ...employee,
+      setForm({
+        ...defaultForm, ...employee,
         age: employee.birthDate ? String(calculateAge(employee.birthDate)) : '',
         monthsWorked: (employee.startDate && employee.endDate) ? String(calculateMonthsWorked(employee.startDate, employee.endDate)) : ''
       });
@@ -100,6 +113,35 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
       setForm((prev) => ({ ...prev, age: String(age) }));
     }
   }, [form.birthDate]);
+
+  useEffect(() => {
+    const autoGenerateGipId = async () => {
+      if (
+        form.gipId ||                // user already typed
+        !form.name?.trim() ||         // no name yet
+        !form.startDate               // no start date yet
+      ) {
+        return;
+      }
+
+      try {
+        const generated = await generateNextGipId(
+          form.name.trim(),
+          form.startDate
+        );
+
+        setForm((prev) => ({
+          ...prev,
+          gipId: generated,
+        }));
+      } catch (err) {
+        console.error("Auto GIP ID generation failed:", err);
+      }
+    };
+
+    autoGenerateGipId();
+  }, [form.name, form.startDate]); // 🔑 triggers only when needed
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -155,23 +197,79 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
         <Stack spacing={2}>
           <SectionBox title="Personal Information">
             <Stack spacing={2}>
-              <TextField fullWidth label="Full Name" name="name" value={form.name} onChange={handleChange} required />
+              <Grid container spacing={2}>
+                <Grid item xs={12} size={8}>
+                  <Stack spacing={2}>
+                    <TextField fullWidth label="Full Name" name="name" value={form.name} onChange={handleChange} placeholder='Last Name, First Name Middle Name Suffix' required />
+                  </Stack>
+                </Grid>
+                <Grid item xs={12} size={4}>
+                  <Stack spacing={2}>
+
+                    <TextField fullWidth label="Gender" name="gender" value={form.gender} onChange={handleChange} select>
+                      {GENDER_OPTIONS.map((gender) => (
+                        <MenuItem key={gender} value={gender}>{gender}</MenuItem>
+                      ))}
+                    </TextField>
+                  </Stack>
+                </Grid>
+              </Grid>
+              <Grid container spacing={2}>
+
+                <Grid item xs={12} size={6}>
+                  <Stack spacing={2}>
+                    <TextField fullWidth label="Date of Birth" name="birthDate" type="date" value={form.birthDate} onChange={handleChange} InputLabelProps={{ shrink: true }} />
+
+
+
+
+                    <TextField fullWidth label="Contact Number" name="contactNumber" value={form.contactNumber} onChange={handleChange} />
+
+                  </Stack>
+                </Grid>
+                <Grid item xs={12} size={6}>
+                  <Stack spacing={2}>
+                    <TextField fullWidth label="Age" name="age" value={form.age} onChange={handleChange} />
+
+
+                    <TextField fullWidth label="Email Address" name="email" value={form.email} onChange={handleChange} />
+                  </Stack>
+                </Grid> 
+              </Grid>
               <TextField fullWidth label="Address" name="address" value={form.address} onChange={handleChange} />
-              <TextField fullWidth label="Date of Birth" name="birthDate" type="date" value={form.birthDate} onChange={handleChange} InputLabelProps={{ shrink: true }} />
-              <TextField fullWidth label="Age" name="age" value={form.age} onChange={handleChange} />
-              <TextField fullWidth label="Gender" name="gender" value={form.gender} onChange={handleChange} select>
-                {GENDER_OPTIONS.map((gender) => <MenuItem key={gender} value={gender}>{gender}</MenuItem>)}
-              </TextField>
-              <TextField fullWidth label="Contact Number" name="contactNumber" value={form.contactNumber} onChange={handleChange} />
-              <TextField fullWidth label="Email Address" name="email" value={form.email} onChange={handleChange} />
+
             </Stack>
           </SectionBox>
 
           <SectionBox title="Educational Background">
             <Stack spacing={2}>
               <TextField fullWidth label="Educational Attainment" name="education" value={form.education} onChange={handleChange} />
-              <TextField fullWidth label="Degree / Course / Track" name="degree" value={form.degree} onChange={handleChange} />
-              <TextField fullWidth label="School" name="school" value={form.school} onChange={handleChange} />
+              <Grid container spacing={2}>
+                <Grid item xs={12} size={4}>
+                  <Stack spacing={2}>
+                    <TextField fullWidth label="Primary Degree / Track" name="primaryDegree" value={form.primaryDegree} onChange={handleChange} />
+                    <TextField fullWidth label="High School Degree / Track" name="secondaryDegree" value={form.secondaryDegree} onChange={handleChange} />
+                     <TextField fullWidth label="Senior High School Degree / Track" name="seniorHighDegree" value={form.seniorHighDegree} onChange={handleChange} />
+                    <TextField fullWidth label="College Degree / Course" name="collegeDegree" value={form.collegeDegree} onChange={handleChange} />
+                  </Stack>
+                </Grid>
+                <Grid item xs={12} size={4}>
+                  <Stack spacing={2}>
+                    <TextField fullWidth label="Primary School" name="primarySchool" value={form.primarySchool} onChange={handleChange} />
+                    <TextField fullWidth label="High School" name="secondarySchool" value={form.secondarySchool} onChange={handleChange} />
+                    <TextField fullWidth label="Senior High School" name="seniorHighSchool" value={form.seniorHighSchool} onChange={handleChange} />
+                    <TextField fullWidth label="College School" name="collegeSchool" value={form.collegeSchool} onChange={handleChange} />
+                  </Stack>
+                </Grid>
+                <Grid item xs={12} size={4}>
+                  <Stack spacing={2}>
+                    <TextField fullWidth label="Primary Year" name="primaryYear" value={form.primaryYear} onChange={handleChange} />
+                    <TextField fullWidth label="Secondary Year" name="secondaryYear" value={form.secondaryYear} onChange={handleChange} />
+                    <TextField fullWidth label="Senior High Year" name="seniorHighYear" value={form.seniorHighYear} onChange={handleChange} />
+                    <TextField fullWidth label="College Year" name="collegeYear" value={form.collegeYear} onChange={handleChange} />
+                  </Stack>
+                </Grid>
+              </Grid>
             </Stack>
           </SectionBox>
 
@@ -186,7 +284,7 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
           <SectionBox title="Government Info">
             <Stack spacing={2}>
               <TextField fullWidth label="Disadvantage Group" name="disadvantageGroup" value={form.disadvantageGroup} onChange={handleChange} />
-              <TextField fullWidth label="Documents Submitted" name="documents" value={form.documents} onChange={handleChange} />
+              <TextField fullWidth label="Documents Submitted" name="documentsSubmitted" value={form.documentsSubmitted} onChange={handleChange} />
               <TextField fullWidth label="Valid ID Type and No." name="validId" value={form.validId} onChange={handleChange} />
               <TextField fullWidth label="Date or Place Issued" name="validIdIssued" value={form.validIdIssued} onChange={handleChange} />
               <TextField fullWidth label="LBP Account Number" name="lbpAccount" value={form.lbpAccount} onChange={handleChange} />
@@ -232,8 +330,8 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSubmit} variant="contained">
+        <Button onClick={onClose} sx={{ color: "#55C386" }}>Cancel</Button>
+        <Button onClick={handleSubmit} variant="contained" sx={{ backgroundColor: "#55C386", color: "#000000" }}>
           {isEditMode ? 'Save Changes' : 'Add Employee'}
         </Button>
       </DialogActions>
