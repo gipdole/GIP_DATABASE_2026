@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
-  TextField, Button, Stack, MenuItem, Typography, Box, Grid
+  TextField, Button, Stack, MenuItem, Typography, Box, Grid, Checkbox,
+  FormControlLabel, FormControl, FormGroup
 } from '@mui/material';
 
 import { addEmployee, updateEmployee } from '../utils/firebaseHelpers';
@@ -16,6 +17,7 @@ const defaultForm = {
   monthsWorked: '',
   birthDate: '',
   age: '',
+  civilStatus: '',
   lgu: '',
   address: '',
   gender: '',
@@ -53,8 +55,23 @@ const defaultForm = {
   gpaiLink: '',
   employmentStatus: '',
   remarks: '',
+  // Checkboxes
+  pwd: false,
+  iP: false,
+  victimOfArmedConflict: false,
+  rebelReturnee: false,
+  fourP: false,
+  othersDG: '',
+  // checkboxes documents
+  certificationFromSchool: false,
+  birthCertificate: false,
+  transcriptOfRecords: false,
+  diploma: false,
+  form137138: false,
+  applicationLetter: false,
+  barangayCertificate: false,
+  othersD: ''
 };
-
 const LGU_OPTIONS = [
   'N/A', 'ATOK', 'BAGUIO CITY', 'BAKUN', 'BENGUET', 'BOKOD', 'BUGUIAS',
   'ITOGON', 'KABAYAN', 'KAPANGAN', 'KIBUNGAN', 'MANKAYAN',
@@ -63,6 +80,13 @@ const LGU_OPTIONS = [
 
 const GENDER_OPTIONS = ['Male', 'Female', 'Other'];
 
+const CIVIL_STATUS_OPTIONS = ['Single', 'Married', 'Widowed', 'Separated', 'Divorced'];
+
+const EDUCATIONAL_ATTAINMENT_OPTIONS = [
+  'Junior High School Graduate',
+  'Senior High School Graduate', 'College Graduate',
+  'Technical Vocational Graduate', 'ALS Graduate'
+];
 const calculateAge = (birthDateStr) => {
   const birth = new Date(birthDateStr);
   const today = new Date();
@@ -147,6 +171,10 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleCheckboxChange = (name) => (e) => {
+    setForm((prev) => ({ ...prev, [name]: e.target.checked }));
+  };
+
   const handleSubmit = async () => {
     const trimmedName = form.name.trim();
     const trimmedGipId = form.gipId.trim();
@@ -214,48 +242,64 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
                 </Grid>
               </Grid>
               <Grid container spacing={2}>
-
-                <Grid item xs={12} size={6}>
+                <Grid item xs={12} size={4}>
                   <Stack spacing={2}>
                     <TextField fullWidth label="Date of Birth" name="birthDate" type="date" value={form.birthDate} onChange={handleChange} InputLabelProps={{ shrink: true }} />
-
-
-
+                  </Stack>
+                </Grid>
+                <Grid item xs={12} size={4}>
+                  <Stack spacing={2}>
+                    <TextField fullWidth label="Age" name="age" value={form.age} onChange={handleChange} />
+                  </Stack>
+                </Grid>
+                <Grid item xs={12} size={4}>
+                  <Stack spacing={2}>
+                    <TextField fullWidth label="Civil Status" name="civilStatus" value={form.civilStatus} onChange={handleChange} select>
+                      {CIVIL_STATUS_OPTIONS.map((status) => (
+                        <MenuItem key={status} value={status}>{status}</MenuItem>
+                      ))}
+                    </TextField>
+                  </Stack>
+                </Grid>
+              </Grid>
+              <Grid container spacing={2}>
+                <Grid item xs={12} size={6}>
+                  <Stack spacing={2}>
 
                     <TextField fullWidth label="Contact Number" name="contactNumber" value={form.contactNumber} onChange={handleChange} />
-
                   </Stack>
                 </Grid>
                 <Grid item xs={12} size={6}>
                   <Stack spacing={2}>
-                    <TextField fullWidth label="Age" name="age" value={form.age} onChange={handleChange} />
-
 
                     <TextField fullWidth label="Email Address" name="email" value={form.email} onChange={handleChange} />
                   </Stack>
-                </Grid> 
+                </Grid>
               </Grid>
               <TextField fullWidth label="Address" name="address" value={form.address} onChange={handleChange} />
-
             </Stack>
           </SectionBox>
 
           <SectionBox title="Educational Background">
             <Stack spacing={2}>
-              <TextField fullWidth label="Educational Attainment" name="education" value={form.education} onChange={handleChange} />
+              <TextField fullWidth label="Educational Attainment" name="education" value={form.education} onChange={handleChange} select>
+                {EDUCATIONAL_ATTAINMENT_OPTIONS.map((education) => (
+                  <MenuItem key={education} value={education}>{education}</MenuItem>
+                ))}
+              </TextField>
               <Grid container spacing={2}>
                 <Grid item xs={12} size={4}>
                   <Stack spacing={2}>
                     <TextField fullWidth label="Primary Degree / Track" name="primaryDegree" value={form.primaryDegree} onChange={handleChange} />
-                    <TextField fullWidth label="High School Degree / Track" name="secondaryDegree" value={form.secondaryDegree} onChange={handleChange} />
-                     <TextField fullWidth label="Senior High School Degree / Track" name="seniorHighDegree" value={form.seniorHighDegree} onChange={handleChange} />
+                    <TextField fullWidth label="Junior High School Degree / Track" name="secondaryDegree" value={form.secondaryDegree} onChange={handleChange} />
+                    <TextField fullWidth label="Senior High School Degree / Track" name="seniorHighDegree" value={form.seniorHighDegree} onChange={handleChange} />
                     <TextField fullWidth label="College Degree / Course" name="collegeDegree" value={form.collegeDegree} onChange={handleChange} />
                   </Stack>
                 </Grid>
                 <Grid item xs={12} size={4}>
                   <Stack spacing={2}>
                     <TextField fullWidth label="Primary School" name="primarySchool" value={form.primarySchool} onChange={handleChange} />
-                    <TextField fullWidth label="High School" name="secondarySchool" value={form.secondarySchool} onChange={handleChange} />
+                    <TextField fullWidth label="Junior High School" name="secondarySchool" value={form.secondarySchool} onChange={handleChange} />
                     <TextField fullWidth label="Senior High School" name="seniorHighSchool" value={form.seniorHighSchool} onChange={handleChange} />
                     <TextField fullWidth label="College School" name="collegeSchool" value={form.collegeSchool} onChange={handleChange} />
                   </Stack>
@@ -263,7 +307,7 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
                 <Grid item xs={12} size={4}>
                   <Stack spacing={2}>
                     <TextField fullWidth label="Primary Year" name="primaryYear" value={form.primaryYear} onChange={handleChange} />
-                    <TextField fullWidth label="Secondary Year" name="secondaryYear" value={form.secondaryYear} onChange={handleChange} />
+                    <TextField fullWidth label="Junior High School Year" name="secondaryYear" value={form.secondaryYear} onChange={handleChange} />
                     <TextField fullWidth label="Senior High Year" name="seniorHighYear" value={form.seniorHighYear} onChange={handleChange} />
                     <TextField fullWidth label="College Year" name="collegeYear" value={form.collegeYear} onChange={handleChange} />
                   </Stack>
@@ -273,19 +317,112 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
           </SectionBox>
 
           <SectionBox title="Work Experience">
-            <Stack spacing={2}>
-              <TextField fullWidth label="Company Name" name="workCompany" value={form.workCompany} onChange={handleChange} />
-              <TextField fullWidth label="Position" name="workPosition" value={form.workPosition} onChange={handleChange} />
-              <TextField fullWidth label="Period of Engagement" name="workPeriod" value={form.workPeriod} onChange={handleChange} />
-            </Stack>
+            <Grid container spacing={2}>
+              <Grid item xs={12} size={4}>
+                <Stack spacing={2}>
+                  <TextField fullWidth label="Company Name" name="workCompany" value={form.workCompany} onChange={handleChange} />
+                  <TextField fullWidth label="Company Name" name="workCompany" value={form.workCompany} onChange={handleChange} />
+                  <TextField fullWidth label="Company Name" name="workCompany" value={form.workCompany} onChange={handleChange} />
+                </Stack>
+              </Grid>
+              <Grid item xs={12} size={4}>
+                <Stack spacing={2}>
+                  <TextField fullWidth label="Position" name="workPosition" value={form.workPosition} onChange={handleChange} />
+                  <TextField fullWidth label="Position" name="workPosition" value={form.workPosition} onChange={handleChange} />
+                  <TextField fullWidth label="Position" name="workPosition" value={form.workPosition} onChange={handleChange} />
+                </Stack>
+              </Grid>
+              <Grid item xs={12} size={4}>
+                <Stack spacing={2}>
+                  <TextField fullWidth label="Period of Engagement" name="workPeriod" value={form.workPeriod} onChange={handleChange} />
+                  <TextField fullWidth label="Period of Engagement" name="workPeriod" value={form.workPeriod} onChange={handleChange} />
+                  <TextField fullWidth label="Period of Engagement" name="workPeriod" value={form.workPeriod} onChange={handleChange} />
+                </Stack>
+              </Grid>
+            </Grid>
+          </SectionBox>
+
+          <SectionBox title="Disadvantage Group">
+            <Grid container spacing={2}>
+              <Grid item xs={12} size={6}>
+                <Stack spacing={2}>
+                  <FormControlLabel
+                    control={<Checkbox checked={form.pwd} onChange={handleCheckboxChange('pwd')} />}
+                    label="Person with Disability (PWD)"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={form.iP} onChange={handleCheckboxChange('iP')} />}
+                    label="Indigenous People (IP)"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={form.victimOfArmedConflict} onChange={handleCheckboxChange('victimOfArmedConflict')} />}
+                    label="Victim of Armed Conflict"
+                  />
+                </Stack>
+              </Grid>
+              <Grid item xs={12} size={6}>
+                <Stack spacing={2}>
+                  <FormControl>
+                    <FormGroup>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={form.rebelReturnee}
+                            onChange={handleCheckboxChange('rebelReturnee')}
+                          />
+                        }
+                        label="Rebel Returnee"
+                      />
+                      <FormControlLabel control={<Checkbox checked={form.fourP} onChange={handleCheckboxChange('fourP')} />} label="4Ps Beneficiary" />
+                      <TextField fullWidth label="Others, specify:" name="othersDG" value={form.othersDG} onChange={handleChange} variant='filled' sx={{ mt: 2 }} />
+                    </FormGroup>
+                  </FormControl>
+                </Stack>
+              </Grid>
+            </Grid>
+          </SectionBox>
+
+          <SectionBox title="Documents">
+            <Grid container spacing={2}>
+              <Grid item xs={12} size={6}>
+                <Stack spacing={2}>
+                  <FormControlLabel
+                    control={<Checkbox checked={form.birthCertificate} onChange={handleCheckboxChange('birthCertificate')} />}
+                    label="Birth Certificate"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={form.transcriptOfRecords} onChange={handleCheckboxChange('transcriptOfRecords')} />}
+                    label="Transcript of Records"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={form.diploma} onChange={handleCheckboxChange('diploma')} />}
+                    label="Diploma"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={form.form137138} onChange={handleCheckboxChange('form137138')} />}
+                    label="Form 137/138"
+                  />
+                </Stack>
+              </Grid>
+              <Grid item xs={12} size={6}>
+                <Stack spacing={2}>
+                  <FormControl>
+                    <FormGroup>
+                      <FormControlLabel control={<Checkbox checked={form.applicationLetter} onChange={handleCheckboxChange('applicationLetter')} />} label="Application Letter" />
+                      <FormControlLabel control={<Checkbox checked={form.barangayCertificate} onChange={handleCheckboxChange('barangayCertificate')} />} label="Barangay Certificate" />
+                      <FormControlLabel control={<Checkbox checked={form.certificationFromSchool} onChange={handleCheckboxChange('certificationFromSchool')} />} label="Certification from School" />
+                      <TextField fullWidth label="Others, specify:" name="othersD" value={form.othersD} onChange={handleChange} variant='filled' sx={{ mt: 2 }} />
+                    </FormGroup>
+                  </FormControl>
+                </Stack>
+              </Grid>
+            </Grid>
           </SectionBox>
 
           <SectionBox title="Government Info">
             <Stack spacing={2}>
-              <TextField fullWidth label="Disadvantage Group" name="disadvantageGroup" value={form.disadvantageGroup} onChange={handleChange} />
-              <TextField fullWidth label="Documents Submitted" name="documentsSubmitted" value={form.documentsSubmitted} onChange={handleChange} />
-              <TextField fullWidth label="Valid ID Type and No." name="validId" value={form.validId} onChange={handleChange} />
-              <TextField fullWidth label="Date or Place Issued" name="validIdIssued" value={form.validIdIssued} onChange={handleChange} />
+              <TextField fullWidth label="Valid ID Type: Number" name="validId" value={form.validId} onChange={handleChange} />
+              <TextField fullWidth label="Date / Place Issued" name="validIdIssued" value={form.validIdIssued} onChange={handleChange} placeholder='MMM/DDD/YYYY or Date Issued' />
               <TextField fullWidth label="LBP Account Number" name="lbpAccount" value={form.lbpAccount} onChange={handleChange} />
             </Stack>
           </SectionBox>
@@ -304,18 +441,29 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
                 {LGU_OPTIONS.map((option) => <MenuItem key={option} value={option}>{option}</MenuItem>)}
               </TextField>
               <TextField fullWidth label="Previous Experience (days)" name="previousExperience" value={form.previousExperience} onChange={handleChange} />
-              <TextField fullWidth label="Date Hired" name="startDate" type="date" value={form.startDate} onChange={handleChange} InputLabelProps={{ shrink: true }} />
-              <TextField fullWidth label="Date Ended" name="endDate" type="date" value={form.endDate} onChange={handleChange} InputLabelProps={{ shrink: true }} />
+              <Grid container spacing={2}>
+                <Grid item xs={12} size={6}>
+                  <Stack spacing={2}>
+                    <TextField fullWidth label="Date Hired" name="startDate" type="date" value={form.startDate} onChange={handleChange} InputLabelProps={{ shrink: true }} />
+                    </Stack>
+                </Grid>
+                <Grid item xs={12} size={6}>
+                  <Stack spacing={2}>
+                     <TextField fullWidth label="Date Ended" name="endDate" type="date" value={form.endDate} onChange={handleChange} InputLabelProps={{ shrink: true }} />
+                    </Stack>
+                </Grid>
+                </Grid>
+              
+             
               <TextField fullWidth label="Place of Assignment" name="assignmentPlace" value={form.assignmentPlace} onChange={handleChange} />
               <TextField fullWidth label="ADL Number" name="adlNo" value={form.adlNo} onChange={handleChange} />
             </Stack>
           </SectionBox>
 
-          <SectionBox title="GSIS & GPAI">
+          <SectionBox title="GSIS">
             <Stack spacing={2}>
               <TextField fullWidth label="GSIS Beneficiary Name" name="gsisName" value={form.gsisName} onChange={handleChange} />
               <TextField fullWidth label="GSIS Beneficiary Relationship" name="gsisRelationship" value={form.gsisRelationship} onChange={handleChange} />
-              <TextField fullWidth label="GPAI Link" name="gpaiLink" value={form.gpaiLink} onChange={handleChange} />
             </Stack>
           </SectionBox>
 
