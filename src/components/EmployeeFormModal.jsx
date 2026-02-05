@@ -22,7 +22,6 @@ const defaultForm = {
   contactNumber: '',
   email: '',
   educationalAttainment: '',
-
   primaryDegree: '',
   primarySchool: '',
   primaryYear: '',
