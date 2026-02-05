@@ -16,9 +16,9 @@ const getInitials = (name = "") =>
     .slice(0, MAX_INITIALS);
 
 /**
- * Generates a 3-digit random number with leading zeros (e.g., "045")
+ * Generates a 2-digit random number with leading zeros (e.g., "045")
  */
-const getRandomSuffix = () => String(Math.floor(Math.random() * 1000)).padStart(3, "0");
+const getRandomSuffix = () => String(Math.floor(Math.random() * 100)).padStart(2, "0");
 
 /**
  * Generates a unique GIP ID using the format: GIP-<INITIALS>-<YEAR>-<RANDOM>

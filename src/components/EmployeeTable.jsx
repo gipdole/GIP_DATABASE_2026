@@ -13,12 +13,13 @@ import {
   getEmployees,
   deleteEmployee,
   uploadEmployeesFromExcel,
-  exportSelectedEmployeesToExcel,
 } from '../utils/firebaseHelpers';
 
-import { getAllColumns } from '../utils/columns';
+import {getAllColumns } from '../utils/columns';
 import EmployeeFormModal from './EmployeeFormModal';
 import ViewEmployeeModal from './ViewEmployeeModal';
+
+import { exportTableToExcel } from "../utils/excel";
 
 const lguPriority = [
   'baguio city', 'atok', 'bakun', 'benguet', 'bokod', 'buguias',
@@ -80,8 +81,7 @@ const EmployeeTable = () => {
   };
 
   const handleExportSelectedExcel = () => {
-    const selected = table.getSelectedRowModel().rows.map((r) => r.original);
-    exportSelectedEmployeesToExcel(selected);
+    exportTableToExcel(table);
   };
 
   const columns = useMemo(() =>

@@ -11,7 +11,6 @@ import {
 import { db } from '../firebaseConfig';
 import * as XLSX from 'xlsx';
 
-import { importFromExcel } from './excel';
 import { generateNextGipId } from './idUtils';
 import { calculateMonthsWorked } from './dateUtils';
 

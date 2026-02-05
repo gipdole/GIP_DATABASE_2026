@@ -22,8 +22,17 @@ const defaultForm = {
   contactNumber: '',
   email: '',
   educationalAttainment: '',
-  degree: '',
-  school: '',
+  
+  primaryDegree: '',
+  primarySchool: '',
+  primaryYear: '',
+  secondaryDegree: '',
+  secondarySchool: '',
+  secondaryYear: '',
+  collegeDegree: '',
+  collegeSchool: '',
+  collegeYear: '',
+
   workCompany: '',
   workPosition: '',
   workPeriod: '',
@@ -47,7 +56,7 @@ const defaultForm = {
 const LGU_OPTIONS = [
   'N/A', 'ATOK', 'BAGUIO CITY', 'BAKUN', 'BENGUET', 'BOKOD', 'BUGUIAS',
   'ITOGON', 'KABAYAN', 'KAPANGAN', 'KIBUNGAN', 'MANKAYAN',
-  'REGIONAL OFFICE', 'SABLAN', 'TUBA', 'TUBLAY'
+  'LA TRINIDAD', 'SABLAN', 'TUBA', 'TUBLAY'
 ];
 
 const GENDER_OPTIONS = ['Male', 'Female', 'Other'];
@@ -100,6 +109,35 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
       setForm((prev) => ({ ...prev, age: String(age) }));
     }
   }, [form.birthDate]);
+
+  useEffect(() => {
+  const autoGenerateGipId = async () => {
+    if (
+      form.gipId ||                // user already typed
+      !form.name?.trim() ||         // no name yet
+      !form.startDate               // no start date yet
+    ) {
+      return;
+    }
+
+    try {
+      const generated = await generateNextGipId(
+        form.name.trim(),
+        form.startDate
+      );
+
+        setForm((prev) => ({
+          ...prev,
+          gipId: generated,
+        }));
+      } catch (err) {
+        console.error("Auto GIP ID generation failed:", err);
+      }
+    };
+
+    autoGenerateGipId();
+  }, [form.name, form.startDate]); // 🔑 triggers only when needed
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -156,6 +194,7 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
           <SectionBox title="Personal Information">
             <Stack spacing={2}>
               <TextField fullWidth label="Full Name" name="name" value={form.name} onChange={handleChange} required />
+              <TextField fullWidth label="GIP ID" name="gipId" value={form.gipId} onChange={handleChange} />
               <TextField fullWidth label="Address" name="address" value={form.address} onChange={handleChange} />
               <TextField fullWidth label="Date of Birth" name="birthDate" type="date" value={form.birthDate} onChange={handleChange} InputLabelProps={{ shrink: true }} />
               <TextField fullWidth label="Age" name="age" value={form.age} onChange={handleChange} />
@@ -169,9 +208,20 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
 
           <SectionBox title="Educational Background">
             <Stack spacing={2}>
-              <TextField fullWidth label="Educational Attainment" name="education" value={form.education} onChange={handleChange} />
-              <TextField fullWidth label="Degree / Course / Track" name="degree" value={form.degree} onChange={handleChange} />
-              <TextField fullWidth label="School" name="school" value={form.school} onChange={handleChange} />
+                <TextField fullWidth label="Educational Attainment" name="education" value={form.education} onChange={handleChange} />
+
+                <TextField fullWidth label="Primary Degree / Track" name="primaryDegree" value={form.primaryDegree} onChange={handleChange} />
+                <TextField fullWidth label="Primary School" name="primarySchool" value={form.primarySchool} onChange={handleChange} />
+                <TextField fullWidth label="Primary Year" name="primaryYear" value={form.primaryYear} onChange={handleChange} />
+
+                <TextField fullWidth label="Secondary Degree / Track" name="secondaryDegree" value={form.secondaryDegree} onChange={handleChange} />
+                <TextField fullWidth label="Secondary School" name="secondarySchool" value={form.secondarySchool} onChange={handleChange} />
+                <TextField fullWidth label="Secondary Year" name="secondaryYear" value={form.secondaryYear} onChange={handleChange} />
+
+                <TextField fullWidth label="College Degree / Course" name="collegeDegree" value={form.collegeDegree} onChange={handleChange} />
+                <TextField fullWidth label="College School" name="collegeSchool" value={form.collegeSchool} onChange={handleChange} />
+                <TextField fullWidth label="College Year" name="collegeYear" value={form.collegeYear} onChange={handleChange} />
+
             </Stack>
           </SectionBox>
 
@@ -186,7 +236,7 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
           <SectionBox title="Government Info">
             <Stack spacing={2}>
               <TextField fullWidth label="Disadvantage Group" name="disadvantageGroup" value={form.disadvantageGroup} onChange={handleChange} />
-              <TextField fullWidth label="Documents Submitted" name="documents" value={form.documents} onChange={handleChange} />
+              <TextField fullWidth label="Documents Submitted" name="documentsSubmitted" value={form.documentsSubmitted}  onChange={handleChange} />
               <TextField fullWidth label="Valid ID Type and No." name="validId" value={form.validId} onChange={handleChange} />
               <TextField fullWidth label="Date or Place Issued" name="validIdIssued" value={form.validIdIssued} onChange={handleChange} />
               <TextField fullWidth label="LBP Account Number" name="lbpAccount" value={form.lbpAccount} onChange={handleChange} />

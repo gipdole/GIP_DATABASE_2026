@@ -1,55 +1,88 @@
-// utils/dateUtils.js
-
-import { differenceInCalendarMonths, isValid, parseISO } from "date-fns";
+// src/utils/dateUtils.js
+import { differenceInMonths, differenceInDays, isValid } from "date-fns";
 
 /**
- * Safely parses a date string or object to a valid Date.
- * @param {string|Date} date - Input date.
- * @returns {Date|null}
+ * Calculate age in years from date of birth
+ * @param {string | Date} dob 
+ * @returns {number | null} Age in years
  */
-const safeParseDate = (date) => {
-  if (!date) return null;
-  const parsed = typeof date === "string" ? parseISO(date) : new Date(date);
-  return isValid(parsed) ? parsed : null;
+export const calculateAge = (dob) => {
+  const date = new Date(dob);
+  if (!isValid(date)) return null;
+  const diff = new Date() - date;
+  return Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
 };
 
 /**
- * Calculates age from a birthdate using the current date.
- * Returns "" if no valid birthdate is provided.
- * 
- * @param {string|Date} birthDate
- * @returns {number|string}
- */
-export const calculateAge = (birthDate) => {
-  const birth = safeParseDate(birthDate);
-  if (!birth) return "";
-
-  const now = new Date();
-  let age = now.getFullYear() - birth.getFullYear();
-
-  const monthDiff = now.getMonth() - birth.getMonth();
-  const dayDiff = now.getDate() - birth.getDate();
-
-  if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
-    age--;
-  }
-
-  return age;
-};
-
-/**
- * Calculates number of full calendar months between start and end dates.
- * Always returns at least 1 month.
- * 
- * @param {string|Date} start
- * @param {string|Date} end
- * @returns {number}
+ * Calculate total months worked (legacy)
+ * @param {string | Date} start 
+ * @param {string | Date} end 
+ * @returns {number} Months worked (minimum 1)
  */
 export const calculateMonthsWorked = (start, end) => {
-  const startDate = safeParseDate(start);
-  const endDate = safeParseDate(end);
-  if (!startDate || !endDate) return 1;
+  if (!start || !end) return 0;
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+  if (!isValid(startDate) || !isValid(endDate)) return 0;
 
-  const months = differenceInCalendarMonths(endDate, startDate) + 1;
-  return Math.max(months, 1);
+  let months = differenceInMonths(endDate, startDate);
+  return months < 1 ? 1 : months;
+};
+
+/**
+ * Calculate months AND days worked between two dates
+ * @param {string | Date} start 
+ * @param {string | Date} end 
+ * @returns {{ months: number, days: number }}
+ */
+export const calculateMonthsAndDaysWorked = (start, end) => {
+  if (!start || !end) return { months: 0, days: 0 };
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+  if (!isValid(startDate) || !isValid(endDate)) return { months: 0, days: 0 };
+
+  // Calculate full months difference
+  let months = differenceInMonths(endDate, startDate);
+
+  // Temporary date to calculate leftover days
+  let tempDate = new Date(startDate);
+  tempDate.setMonth(tempDate.getMonth() + months);
+
+  let days = differenceInDays(endDate, tempDate);
+
+  // If leftover days negative (endDate is before tempDate), adjust
+  if (days < 0) {
+    months -= 1;
+    tempDate.setMonth(tempDate.getMonth() - 1);
+    days = differenceInDays(endDate, tempDate);
+  }
+
+  // Ensure minimums
+  if (months < 0) months = 0;
+  if (days < 0) days = 0;
+
+  return { months, days };
+};
+
+/**
+ * Format months + days into human-readable string
+ * @param {{ months: number, days: number }} duration 
+ * @returns {string} e.g., "3 MONTHS 12 DAYS" or "15 DAYS"
+ */
+export const formatDuration = ({ months, days }) => {
+  let totalMonths = months;
+  let totalDays = days;
+
+  if (totalDays >= 30) {
+    totalMonths += Math.floor(totalDays / 30);
+    totalDays = totalDays % 30;
+  }
+
+  if (totalMonths > 0) {
+    return `${totalMonths} MONTH${totalMonths > 1 ? "S" : ""}${
+      totalDays > 0 ? ` ${totalDays} DAY${totalDays > 1 ? "S" : ""}` : ""
+    }`;
+  } else {
+    return `${totalDays} DAY${totalDays > 1 ? "S" : ""}`;
+  }
 };

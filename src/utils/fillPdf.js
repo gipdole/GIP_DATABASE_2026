@@ -50,27 +50,24 @@ export const fillPdf = async (
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const fontSize = 10;
 
+// Page 1:
   const firstPage = pages[0];
-  drawWrappedText(firstPage, name, 70, 530, { font, size: fontSize, maxWidth: 150 });
-  drawWrappedText(firstPage, address || '', 200, 537, { font, size: 8, maxWidth: 80 });
-  drawWrappedText(firstPage, startDate, 300, 530, { font, size: fontSize });
-  drawWrappedText(firstPage, endDate, 365, 530, { font, size: fontSize });
-  drawWrappedText(firstPage, assignmentPlace || '', 422, 537, {
-    font,
-    size: 8,
-    maxWidth: 65,
-  });
+  drawWrappedText(firstPage, name, 45, 530, { font, size: fontSize, maxWidth: 150 });
+  drawWrappedText(firstPage, address || '', 187, 537, { font, size: 8, maxWidth: 80 });
+  drawWrappedText(firstPage, startDate, 280, 530, { font, size: fontSize });
+  drawWrappedText(firstPage, endDate, 340, 530, { font, size: fontSize });
+  drawWrappedText(firstPage, assignmentPlace || '', 400, 537, {font, size: 8, maxWidth: 80, });
 
   // Page 2: signatory name
   if (pages[1]) {
-    drawWrappedText(pages[1], name, 95, 308, { font, size: fontSize, maxWidth: 200 });
+    drawWrappedText(pages[1], name, 70, 345, { font, size: fontSize, maxWidth: 200 });
   }
 
   // Page 3: signatory name + ID (stacked vertically)
   if (pages[2]) {
-    drawWrappedText(pages[2], name, 85, 564, { font, size: fontSize, maxWidth: 200 });
-    drawWrappedText(pages[2], validId || '', 266, 564, { font, size: fontSize, maxWidth: 200 });
-    drawWrappedText(pages[2], validIdIssued || '', 418, 564, { font, size: fontSize, maxWidth: 200 });
+    drawWrappedText(pages[2], name, 90, 642, { font, size: fontSize, maxWidth: 200 });
+    drawWrappedText(pages[2], validId || '', 280, 642, { font, size: fontSize, maxWidth: 200 });
+    drawWrappedText(pages[2], validIdIssued || '', 418, 642, { font, size: fontSize, maxWidth: 200 });
   }
 
   return await pdfDoc.save();

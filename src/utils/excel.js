@@ -1,114 +1,148 @@
-// utils/excel.js
-
 import * as XLSX from "xlsx";
 import { calculateMonthsWorked } from "./dateUtils";
 
 /**
- * Import employees from an Excel file (first sheet only).
- * Returns an array of cleaned employee objects.
- *
- * @param {File} file - Excel file to import
- * @returns {Promise<Array<Object>>}
+ * 🔐 COMPLETE EXPORT SCHEMA (DATA TRUTH)
+ * key   = Firestore field
+ * label = Excel header
  */
-export const importFromExcel = async (file) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
+const EXPORT_SCHEMA = [
+  { key: "name", label: "Full Name" },
+  { key: "gipId", label: "GIP ID" },
+  { key: "startDate", label: "Start Date" },
+  { key: "endDate", label: "End Date" },
+  { key: "monthsWorked", label: "Months Worked" },
 
-    reader.onload = (e) => {
-      try {
-        const workbook = XLSX.read(e.target.result, { type: "binary" });
-        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        const rawData = XLSX.utils.sheet_to_json(worksheet, {
-          defval: "",
-          raw: false,
-          blankrows: false,
-        });
+  { key: "birthDate", label: "Birth Date" },
+  { key: "age", label: "Age" },
+  { key: "gender", label: "Gender" },
 
-        const cleaned = rawData.map((row) => {
-          const startDate = row.startDate?.toString().trim() || "";
-          const endDate = row.endDate?.toString().trim() || "";
-          const monthsWorked = row.monthsWorked ?? calculateMonthsWorked(startDate, endDate);
+  { key: "lgu", label: "LGU" },
+  { key: "address", label: "Address" },
+  { key: "contactNumber", label: "Contact Number" },
+  { key: "email", label: "Email Address" },
 
-          return {
-            idNumber: row.idNumber?.toString().trim() || "",
-            name: row.name?.toString().trim().toUpperCase() || "",
-            gipId: row.gipId?.toString().trim() || "",
-            startDate,
-            endDate,
-            monthsWorked: Number(monthsWorked) || 0,
-            lgu: row.lgu?.toString().trim().toUpperCase() || "N/A",
-            birthDate: row.birthDate?.toString().trim() || "",
-          };
-        });
+  { key: "educationalAttainment", label: "Educational Attainment" },
 
-        resolve(cleaned);
-      } catch (error) {
-        console.error("❌ Failed to parse Excel file:", error);
-        reject("❌ Failed to parse Excel file.");
-      }
-    };
+  { key: "primaryDegree", label: "Primary Degree" },
+  { key: "primarySchool", label: "Primary School" },
+  { key: "primaryYear", label: "Primary Year" },
 
-    reader.onerror = () => reject("❌ Error reading the Excel file.");
-    reader.readAsBinaryString(file);
-  });
-};
+  { key: "secondaryDegree", label: "Secondary Degree" },
+  { key: "secondarySchool", label: "Secondary School" },
+  { key: "secondaryYear", label: "Secondary Year" },
+
+  { key: "collegeDegree", label: "College Degree" },
+  { key: "collegeSchool", label: "College School" },
+  { key: "collegeYear", label: "College Year" },
+
+  { key: "workCompany", label: "Previous Company" },
+  { key: "workPosition", label: "Previous Position" },
+  { key: "workPeriod", label: "Work Period" },
+
+  { key: "disadvantageGroup", label: "Disadvantaged Group" },
+  { key: "documentsSubmitted", label: "Documents Submitted" },
+
+  { key: "validId", label: "Valid ID Type" },
+  { key: "validIdIssued", label: "Valid ID Issued At" },
+
+  { key: "assignmentPlace", label: "Place of Assignment" },
+  { key: "adlNo", label: "ADL No." },
+  { key: "lbpAccount", label: "LBP Account No." },
+
+  { key: "emergencyName", label: "Emergency Contact Name" },
+  { key: "emergencyContact", label: "Emergency Contact Number" },
+  { key: "emergencyAddress", label: "Emergency Contact Address" },
+
+  { key: "gsisName", label: "GSIS Beneficiary Name" },
+  { key: "gsisRelationship", label: "GSIS Relationship" },
+
+  { key: "gpaiLink", label: "GPAI Link" },
+  { key: "employmentStatus", label: "Employment Status" },
+  { key: "remarks", label: "Remarks" },
+];
 
 /**
- * Export employee data to Excel.
- *
- * @param {Array<Object>} data - Employee data to export
- * @param {Array<Object>} columnDefs - Optional columnDefs with accessorKey
- * @param {string} fileName - Output file name
+ * ✅ FINAL EXPORT FUNCTION
  */
-export const exportToExcel = (data, columnDefs = [], fileName = "Employees.xlsx") => {
-  if (!Array.isArray(data) || data.length === 0) {
-    alert("⚠️ No data to export.");
+export const exportTableToExcel = (
+  table,
+  fileName = "GIP Employees.xlsx"
+) => {
+  const rows =
+    table.getSelectedRowModel().rows.length > 0
+      ? table.getSelectedRowModel().rows
+      : table.getRowModel().rows;
+
+  if (!rows.length) {
+    alert("⚠️ No rows to export.");
     return;
   }
 
-  const fallbackFields = [
-    "idNumber",
-    "name",
-    "gipId",
-    "startDate",
-    "endDate",
-    "monthsWorked",
-    "lgu",
-    "birthDate",
+  // 1️⃣ MRT-visible columns (UI truth)
+  const visibleCols = table
+    .getVisibleLeafColumns()
+    .filter(
+      (col) =>
+        col.columnDef.accessorKey &&
+        !col.id.startsWith("mrt-") &&
+        col.id !== "actions"
+    )
+    .map((col) => ({
+      key: col.columnDef.accessorKey,
+      label:
+        typeof col.columnDef.header === "string"
+          ? col.columnDef.header
+          : col.columnDef.accessorKey,
+    }));
+
+  // 2️⃣ Merge UI columns + full schema (NO duplicates)
+  const mergedColumns = [
+    ...visibleCols,
+    ...EXPORT_SCHEMA.filter(
+      (f) => !visibleCols.some((c) => c.key === f.key)
+    ),
   ];
 
-  const exportableFields = Array.isArray(columnDefs) && columnDefs.length
-    ? columnDefs.map((col) => col.accessorKey).filter(Boolean)
-    : fallbackFields;
+  // 3️⃣ Build Excel rows
+  const sheetData = rows.map(({ original }) => {
+    const row = {};
 
-  const cleanData = data.map((row) => {
-    const cleaned = {};
-    for (const key of exportableFields) {
-      let value = row[key];
+    mergedColumns.forEach(({ key, label }) => {
+      let value = original?.[key] ?? "";
 
       if (typeof value === "string") value = value.trim();
 
-      if (["name", "lgu"].includes(key)) value = value?.toUpperCase();
-
-      if (["startDate", "endDate", "birthDate"].includes(key)) {
-        try {
-          const date = new Date(value);
-          value = isNaN(date.getTime()) ? "" : date.toISOString().split("T")[0];
-        } catch {
-          value = "";
-        }
+      if (["name", "lgu"].includes(key)) {
+        value = value.toUpperCase();
       }
 
-      cleaned[key] = value ?? "";
-    }
-    return cleaned;
+      if (["startDate", "endDate", "birthDate"].includes(key)) {
+        const d = new Date(value);
+        value = isNaN(d.getTime())
+          ? ""
+          : d.toISOString().split("T")[0];
+      }
+
+      if (key === "monthsWorked") {
+        value =
+          Number(value) ||
+          calculateMonthsWorked(
+            original.startDate,
+            original.endDate
+          );
+      }
+
+      row[label] = value;
+    });
+
+    return row;
   });
 
-  const worksheet = XLSX.utils.json_to_sheet(cleanData, {
-    header: exportableFields,
-  });
-
+  // 4️⃣ Export
+  const worksheet = XLSX.utils.json_to_sheet(sheetData);
   const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Employees");
   XLSX.writeFile(workbook, fileName);
 };

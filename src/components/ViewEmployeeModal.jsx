@@ -12,16 +12,35 @@ import {
 import { isValid, parseISO, format } from "date-fns";
 
 import GIPExperience from "./GIPExperience";
-import { groupByPersonYear } from "../utils/summary";
+import { calculateMonthsAndDaysWorked, formatDuration } from "../utils/dateUtils";
 
 const ViewEmployeeModal = ({ open, onClose, row, allRows }) => {
   if (!row) return null;
 
-  const summaries = useMemo(() => {
-    const grouped = groupByPersonYear(allRows).filter(
-      (g) => g.name === row.name
+  // Top Duration field
+  const durationTop = useMemo(() => {
+    return formatDuration(
+      calculateMonthsAndDaysWorked(row.startDate, row.endDate)
     );
-    return grouped.sort((a, b) => b.year - a.year);
+  }, [row.startDate, row.endDate]);
+
+  // Total GIP experience across all entries
+  const totalExperience = useMemo(() => {
+    const entries = allRows.filter(
+      (r) => r.name?.toLowerCase().trim() === row.name?.toLowerCase().trim()
+    );
+
+    const total = entries.reduce(
+      (acc, entry) => {
+        const { months, days } = calculateMonthsAndDaysWorked(entry.startDate, entry.endDate);
+        acc.months += months;
+        acc.days += days;
+        return acc;
+      },
+      { months: 0, days: 0 }
+    );
+
+    return formatDuration(total);
   }, [allRows, row.name]);
 
   const formatValue = (value, fallback = "N/A") =>
@@ -34,23 +53,20 @@ const ViewEmployeeModal = ({ open, onClose, row, allRows }) => {
       : "Invalid";
   };
 
-const renderField = (label, value) => (
-  <Box display="flex" gap={1} mb={1}>
-    <Typography component="span" fontWeight="bold">
-      {label}:
-    </Typography>
-    <Typography component="span">
-      {label === "Duration" && typeof value === "number"
-        ? `${value} MONTH${value !== 1 ? "S" : ""}`
-        : label === "Full Name" && typeof value === "string"
-        ? value.toUpperCase()
-        : label.includes("Date")
-        ? formatDate(value)
-        : formatValue(value)}
-    </Typography>
-  </Box>
-);
-
+  const renderField = (label, value) => (
+    <Box display="flex" gap={1} mb={1}>
+      <Typography component="span" fontWeight="bold">
+        {label}:
+      </Typography>
+      <Typography component="span">
+        {label === "Full Name" && typeof value === "string"
+          ? value.toUpperCase()
+          : label.includes("Date")
+          ? formatDate(value)
+          : formatValue(value)}
+      </Typography>
+    </Box>
+  );
 
   return (
     <Dialog
@@ -73,7 +89,7 @@ const renderField = (label, value) => (
         {renderField("GIP ID", row.gipId)}
         {renderField("Start Date", row.startDate)}
         {renderField("End Date", row.endDate)}
-        {renderField("Duration", row.monthsWorked)}
+        {renderField("Duration", durationTop)}
         {renderField("LGU", row.lgu)}
         {renderField("Birthdate", row.birthDate)}
 
@@ -86,21 +102,11 @@ const renderField = (label, value) => (
 
         <Box mt={3}>
           <Typography variant="subtitle1" fontWeight="bold">
-            Summary by Year:
+            Total GIP Experience:
           </Typography>
-          {summaries.length > 0 ? (
-            summaries.map((g) => (
-              <Typography key={g.year}>
-                {g.year}: <strong>{g.totalMonthsWorked}</strong> MONTH
-                {g.totalMonthsWorked !== 1 ? "S" : ""} (
-                {g.entries.length} {g.entries.length === 1 ? "ENTRY" : "ENTRIES"})
-              </Typography>
-            ))
-          ) : (
-            <Typography color="text.secondary">
-              No summary data available.
-            </Typography>
-          )}
+          <Typography>
+            <strong>{totalExperience}</strong>
+          </Typography>
         </Box>
       </DialogContent>
 
