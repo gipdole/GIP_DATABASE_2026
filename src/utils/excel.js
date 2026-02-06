@@ -8,7 +8,6 @@ import { calculateMonthsWorked } from "./dateUtils";
  */
 const EXPORT_SCHEMA = [
   { key: "name", label: "Full Name" },
-  { key: "gipId", label: "GIP ID" },
   { key: "startDate", label: "Start Date" },
   { key: "endDate", label: "End Date" },
   { key: "monthsWorked", label: "Months Worked" },
