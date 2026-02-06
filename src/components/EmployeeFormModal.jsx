@@ -11,7 +11,6 @@ import { calculateMonthsWorked } from '../utils/dateUtils';
 
 const defaultForm = {
   name: '',
-  gipId: '',
   startDate: '',
   endDate: '',
   monthsWorked: '',
@@ -72,6 +71,7 @@ const defaultForm = {
   barangayCertificate: false,
   othersD: ''
 };
+
 const LGU_OPTIONS = [
   'N/A', 'ATOK', 'BAGUIO CITY', 'BAKUN', 'BENGUET', 'BOKOD', 'BUGUIAS',
   'ITOGON', 'KABAYAN', 'KAPANGAN', 'KIBUNGAN', 'MANKAYAN',
@@ -87,6 +87,7 @@ const EDUCATIONAL_ATTAINMENT_OPTIONS = [
   'Senior High School Graduate', 'College Graduate',
   'Technical Vocational Graduate', 'ALS Graduate'
 ];
+
 const calculateAge = (birthDateStr) => {
   const birth = new Date(birthDateStr);
   const today = new Date();
@@ -111,18 +112,23 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
   const [form, setForm] = useState(defaultForm);
   const isEditMode = mode === 'edit';
 
+  // Populate form in edit mode
   useEffect(() => {
     if (isEditMode && employee) {
       setForm({
-        ...defaultForm, ...employee,
+        ...defaultForm,
+        ...employee,
         age: employee.birthDate ? String(calculateAge(employee.birthDate)) : '',
-        monthsWorked: (employee.startDate && employee.endDate) ? String(calculateMonthsWorked(employee.startDate, employee.endDate)) : ''
+        monthsWorked: (employee.startDate && employee.endDate)
+          ? String(calculateMonthsWorked(employee.startDate, employee.endDate))
+          : ''
       });
     } else {
       setForm(defaultForm);
     }
-  }, [employee, mode, open]);
+  }, [employee, mode, open, isEditMode]); // ✅ added isEditMode
 
+  // Update monthsWorked when start or end dates change
   useEffect(() => {
     if (form.startDate && form.endDate) {
       const months = calculateMonthsWorked(form.startDate, form.endDate);
@@ -130,6 +136,7 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
     }
   }, [form.startDate, form.endDate]);
 
+  // Update age when birthDate changes
   useEffect(() => {
     if (form.birthDate) {
       const age = calculateAge(form.birthDate);
@@ -137,35 +144,29 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
     }
   }, [form.birthDate]);
 
+  // Auto-generate GIP ID
   useEffect(() => {
     const autoGenerateGipId = async () => {
       if (
         form.gipId ||                // user already typed
-        !form.name?.trim() ||         // no name yet
-        !form.startDate               // no start date yet
+        !form.name?.trim() ||        // no name yet
+        !form.startDate              // no start date yet
       ) {
         return;
       }
 
       try {
-        const generated = await generateNextGipId(
-          form.name.trim(),
-          form.startDate
-        );
-
-        setForm((prev) => ({
-          ...prev,
-          gipId: generated,
-        }));
+        const generated = await generateNextGipId(form.name.trim(), form.startDate);
+        setForm((prev) => ({ ...prev, gipId: generated }));
       } catch (err) {
         console.error("Auto GIP ID generation failed:", err);
       }
     };
 
     autoGenerateGipId();
-  }, [form.name, form.startDate]); // 🔑 triggers only when needed
+  }, [form.gipId, form.name, form.startDate]); // ✅ added form.gipId
 
-
+  // Handlers
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
