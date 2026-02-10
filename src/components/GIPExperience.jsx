@@ -84,7 +84,7 @@ const GIPExperience = ({ name, excludeId }) => {
         const totalDisplay = formatDuration(total);
 
         return (
-          <Box key={year} mt={2}>
+          <Box key={year}>
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
               {year} — <strong>{totalDisplay}</strong>
             </Typography>
@@ -99,7 +99,7 @@ const GIPExperience = ({ name, excludeId }) => {
               const durationDisplay = formatDuration(duration);
 
               return (
-                <Box key={entry.id} sx={{ pl: 2, mt: 1 }}>
+                <Box key={entry.id} sx={{ pl: 2, }}>
                   <Typography variant="body2">
                     {isValid(start)
                       ? format(start, "MMM d, yyyy").replace(
