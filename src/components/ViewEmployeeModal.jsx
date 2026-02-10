@@ -1,122 +1,298 @@
 // src/components/ViewEmployeeModal.jsx
-import React, { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Typography,
-  Button,
-  Box,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Typography,
+    Button,
+    Box,
+    Card,
+    CardContent,
+    CardHeader,
 } from "@mui/material";
 import { isValid, parseISO, format } from "date-fns";
 
 import GIPExperience from "./GIPExperience";
 import { calculateMonthsAndDaysWorked, formatDuration } from "../utils/dateUtils";
+import { fillGIPInfoPDF } from "../utils/fillPdf";
+
+function GIPInfoPDFPreview({ data }) {
+    const [pdfUrl, setPdfUrl] = useState(null);
+
+    useEffect(() => {
+        let url;
+
+        fillGIPInfoPDF("/GIPEmployeeForm.pdf", data).then((blob) => {
+            url = URL.createObjectURL(blob);
+            setPdfUrl(url);
+        });
+
+        // Cleanup when component unmounts or data changes
+        return () => {
+            if (url) {
+                URL.revokeObjectURL(url);
+                setPdfUrl(null);
+            }
+        };
+    }, [data]);
+
+    if (!pdfUrl) return <div>Loading...</div>;
+
+    return (
+        <iframe
+            id="pdf-iframe"
+            src={pdfUrl}
+            width="100%"
+            height="600px"
+            style={{ border: "none" }}
+            title="Filled PDF Preview"
+        />
+    );
+}
 
 const ViewEmployeeModal = ({ open, onClose, row, allRows }) => {
-  if (!row) return null;
+    if (!row) return null;
 
-  // Top Duration field
-  const durationTop = useMemo(() => {
-    return formatDuration(
-      calculateMonthsAndDaysWorked(row.startDate, row.endDate)
+    console.log(row);
+
+    // Top Duration field
+    const durationTop = useMemo(() => {
+        return formatDuration(calculateMonthsAndDaysWorked(row.startDate, row.endDate));
+    }, [row.startDate, row.endDate]);
+
+    // Total GIP experience across all entries
+    const totalExperience = useMemo(() => {
+        const entries = allRows.filter((r) => r.name?.toLowerCase().trim() === row.name?.toLowerCase().trim());
+
+        const total = entries.reduce(
+            (acc, entry) => {
+                const { months, days } = calculateMonthsAndDaysWorked(entry.startDate, entry.endDate);
+                acc.months += months;
+                acc.days += days;
+                return acc;
+            },
+            { months: 0, days: 0 },
+        );
+
+        return formatDuration(total);
+    }, [allRows, row.name]);
+
+    const formatValue = (value, fallback = "N/A") =>
+        value === undefined || value === null || value === "" ? fallback : value;
+
+    const formatDate = (dateStr) => {
+        if (!dateStr) return "N/A";
+        const parsed = parseISO(dateStr);
+        return isValid(parsed) ? format(parsed, "MMM dd, yyyy").toUpperCase() : "Invalid";
+    };
+
+    const renderValue = (label, value) => {
+        if (label === "Full Name" && typeof value === "string") {
+            return value.toUpperCase();
+        }
+
+        if (label.includes("Date")) {
+            return formatDate(value);
+        }
+
+        return formatValue(value);
+    };
+
+    return (
+        <Dialog
+            open={open}
+            onClose={onClose}
+            fullScreen
+            maxWidth="md"
+            aria-labelledby="view-employee-title"
+            aria-describedby="view-employee-description"
+        >
+            <DialogTitle id="view-employee-title" sx={{ backgroundColor: "#55C386" }}>
+                EMPLOYEE INFORMATION
+            </DialogTitle>
+
+            <DialogContent
+                dividers
+                id="view-employee-description"
+                sx={{ maxHeight: "100%", overflowY: "auto", display: "flex", justifyContent: "space-between", gap: 3 }}
+            >
+                {/* <Card
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 1,
+                        width: "50%",
+                    }}
+                    variant="outlined"
+                >
+                    <CardHeader title={row.gipId} sx={{ backgroundColor: "#55C386" }} />
+                    <CardContent>
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: "row",
+                                width: "100%",
+                                justifyContent: "space-between",
+                                marginBottom: 1,
+                            }}
+                        >
+                            <Typography sx={{ fontSize: "1.125rem" }}>Full Name</Typography>
+                            <Typography sx={{ fontSize: "1.125rem", fontWeight: "bold" }}>
+                                {row.name.toUpperCase()}
+                            </Typography>
+                        </Box>
+
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: "row",
+                                width: "100%",
+                                justifyContent: "space-between",
+                            }}
+                        >
+                            <Typography>Birthdate</Typography>
+                            <Typography sx={{ fontWeight: "bold" }}>{formatDate(row.birthDate)}</Typography>
+                        </Box>
+
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: "row",
+                                width: "100%",
+                                justifyContent: "space-between",
+                            }}
+                        >
+                            <Typography>Start Date</Typography>
+                            <Typography sx={{ fontWeight: "bold" }}>{formatDate(row.startDate)}</Typography>
+                        </Box>
+
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: "row",
+                                width: "100%",
+                                justifyContent: "space-between",
+                            }}
+                        >
+                            <Typography>End Date</Typography>
+                            <Typography sx={{ fontWeight: "bold" }}>{formatDate(row.endDate)}</Typography>
+                        </Box>
+
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: "row",
+                                width: "100%",
+                                justifyContent: "space-between",
+                            }}
+                        >
+                            <Typography>Duration</Typography>
+                            <Typography sx={{ fontWeight: "bold" }}>{durationTop}</Typography>
+                        </Box>
+
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: "row",
+                                width: "100%",
+                                justifyContent: "space-between",
+                            }}
+                        >
+                            <Typography>LGU</Typography>
+                            <Typography sx={{ fontWeight: "bold" }}>{row.lgu}</Typography>
+                        </Box>
+                    </CardContent>
+                </Card>
+
+                <Card
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 1,
+                        width: "50%",
+                    }}
+                    variant="outlined"
+                >
+                    <CardHeader title="GIP EXPERIENCES" sx={{ backgroundColor: "#55C386" }} />
+                    <CardContent
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            width: "100%",
+                            justifyContent: "space-between",
+                            marginBottom: 1,
+                        }}
+                    >
+                        <Box>
+                            <Typography variant="subtitle1" fontWeight="bold"></Typography>
+                            <GIPExperience name={row.name} excludeId={row.idNumber} />
+                        </Box>
+
+                        <Box>
+                            <Typography variant="subtitle1" fontWeight="bold">
+                                Total GIP Experience:
+                            </Typography>
+                            <Typography>
+                                <strong>{totalExperience}</strong>
+                            </Typography>
+                        </Box>
+                    </CardContent>
+                </Card> */}
+                {/* <iframe src="/GIPEmployeeForm.pdf" width="100%" height="100%" style={{ border: "none", height:"100dvh" }} /> */}
+                <GIPInfoPDFPreview
+                    data={{
+                        fullName: formatValue(row.name.toUpperCase()),
+                        address: formatValue(row.address),
+                        contactNumber: formatValue(row.contactNumber),
+                        birthDate: formatValue(formatDate(row.birthDate)),
+                        gender: formatValue(row.gender),
+                        civilStatus: formatValue(row.civilStatus),
+                        collegeDegree: formatValue(row.collegeDegree),
+                        collegeYear: formatValue(row.collegeYear),
+                        collegeSchool: formatValue(row.collegeSchool),
+                        seniorHighDegree: formatValue(row.seniorHighDegree),
+                        seniorHighYear: formatValue(row.seniorHighYear),
+                        seniorHighSchool: formatValue(row.seniorHighSchool),
+                        secondaryDegree: formatValue(row.secondaryDegree),
+                        secondaryYear: formatValue(row.secondaryYear),
+                        secondarySchool: formatValue(row.secondarySchool),
+                        primarySchool: formatValue(row.primarySchool),
+                        primaryYear: formatValue(row.primaryYear),
+                        primaryDegree: formatValue(row.primaryDegree),
+                        workCompany: formatValue(row.workCompany),
+                        workPeriod: formatValue(row.workPeriod),
+                        workPosition: formatValue(row.workPosition),
+                        pwd: row.pwd,
+                        iP: row.iP,
+                        victimOfArmedConflict: row.victimOfArmedConflict,
+                        rebelReturnee: row.rebelReturnee,
+                        fourP: row.fourP,
+                        othersDG: formatValue(row.othersDG),
+                        emergencyName: formatValue(row.emergencyName),
+                        emergencyContact: formatValue(row.emergencyContact),
+                        emergencyAddress: formatValue(row.emergencyAddress),
+                        gsisName: formatValue(row.gsisName),
+                        gsisRelationship: formatValue(row.gsisRelationship),
+                        birthCertificate: row.birthCertificate,
+                        transcriptOfRecords: row.transcriptOfRecords,
+                        barangayCertificate: row.barangayCertificate,
+                        form137138: row.form137138,
+                        diploma: row.diploma,
+                        othersD: formatValue(row.othersD),
+                        certificationFromSchool: row.certificationFromSchool,
+                    }}
+                />
+            </DialogContent>
+
+            <DialogActions>
+                <Button onClick={onClose} autoFocus>
+                    Close
+                </Button>
+            </DialogActions>
+        </Dialog>
     );
-  }, [row.startDate, row.endDate]);
-
-  // Total GIP experience across all entries
-  const totalExperience = useMemo(() => {
-    const entries = allRows.filter(
-      (r) => r.name?.toLowerCase().trim() === row.name?.toLowerCase().trim()
-    );
-
-    const total = entries.reduce(
-      (acc, entry) => {
-        const { months, days } = calculateMonthsAndDaysWorked(entry.startDate, entry.endDate);
-        acc.months += months;
-        acc.days += days;
-        return acc;
-      },
-      { months: 0, days: 0 }
-    );
-
-    return formatDuration(total);
-  }, [allRows, row.name]);
-
-  const formatValue = (value, fallback = "N/A") =>
-    value === undefined || value === null || value === "" ? fallback : value;
-
-  const formatDate = (dateStr) => {
-    const parsed = parseISO(dateStr);
-    return isValid(parsed)
-      ? format(parsed, "MMM dd, yyyy").toUpperCase()
-      : "Invalid";
-  };
-
-  const renderField = (label, value) => (
-    <Box display="flex" gap={1} mb={1}>
-      <Typography component="span" fontWeight="bold">
-        {label}:
-      </Typography>
-      <Typography component="span">
-        {label === "Full Name" && typeof value === "string"
-          ? value.toUpperCase()
-          : label.includes("Date")
-          ? formatDate(value)
-          : formatValue(value)}
-      </Typography>
-    </Box>
-  );
-
-  return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      fullWidth
-      maxWidth="md"
-      aria-labelledby="view-employee-title"
-      aria-describedby="view-employee-description"
-    >
-      <DialogTitle id="view-employee-title">VIEW EMPLOYEE</DialogTitle>
-
-      <DialogContent
-        dividers
-        id="view-employee-description"
-        sx={{ maxHeight: "65vh", overflowY: "auto" }}
-      >
-        {renderField("Full Name", row.name)}
-        {renderField("ID", row.idNumber)}
-        {renderField("GIP ID", row.gipId)}
-        {renderField("Start Date", row.startDate)}
-        {renderField("End Date", row.endDate)}
-        {renderField("Duration", durationTop)}
-        {renderField("LGU", row.lgu)}
-        {renderField("Birthdate", row.birthDate)}
-
-        <Box mt={3}>
-          <Typography variant="subtitle1" fontWeight="bold">
-            GIP EXPERIENCES:
-          </Typography>
-          <GIPExperience name={row.name} excludeId={row.idNumber} />
-        </Box>
-
-        <Box mt={3}>
-          <Typography variant="subtitle1" fontWeight="bold">
-            Total GIP Experience:
-          </Typography>
-          <Typography>
-            <strong>{totalExperience}</strong>
-          </Typography>
-        </Box>
-      </DialogContent>
-
-      <DialogActions>
-        <Button onClick={onClose} autoFocus>
-          Close
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
 };
 
 export default ViewEmployeeModal;
