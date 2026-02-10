@@ -88,6 +88,14 @@ const EDUCATIONAL_ATTAINMENT_OPTIONS = [
   'Technical Vocational Graduate', 'ALS Graduate'
 ];
 
+const BENEFECIARY_RELATIONSHIP_OPTIONS = [
+  'Father', 'Mother', 'Spouse', 'Daughter', 'Son', 'Sibling', 'Grandparent'
+];
+
+const EMPLOYMENT_STATUS_OPTIONS = [
+  'NA', 'Contract Completed', 'Resigned'
+];
+
 const calculateAge = (birthDateStr) => {
   const birth = new Date(birthDateStr);
   const today = new Date();
@@ -462,15 +470,31 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
           </SectionBox>
 
           <SectionBox title="GSIS">
-            <Stack spacing={2}>
-              <TextField fullWidth label="GSIS Beneficiary Name" name="gsisName" value={form.gsisName} onChange={handleChange} />
-              <TextField fullWidth label="GSIS Beneficiary Relationship" name="gsisRelationship" value={form.gsisRelationship} onChange={handleChange} />
-            </Stack>
+            <Grid container spacing={2}>
+              <Grid item xs={12} size={8}>
+                <Stack spacing={2}>
+                  <TextField fullWidth label="GSIS Beneficiary Name" name="gsisName" value={form.gsisName} onChange={handleChange} />
+                  </Stack>
+              </Grid>
+              <Grid item xs={12} size={4}>
+                <Stack spacing={2}>
+                  <TextField fullWidth label="GSIS Beneficiary Relationship" name="gsisRelationship" value={form.gsisRelationship} onChange={handleChange} select>
+                      {BENEFECIARY_RELATIONSHIP_OPTIONS.map((relationship) => (
+                        <MenuItem key={relationship} value={relationship}>{relationship}</MenuItem>
+                      ))}
+                    </TextField>
+                  </Stack>
+              </Grid>
+            </Grid>
           </SectionBox>
 
           <SectionBox title="Other">
             <Stack spacing={2}>
-              <TextField fullWidth label="Employment Status" name="employmentStatus" value={form.employmentStatus} onChange={handleChange} />
+              <TextField fullWidth label="Employment Status" name="employmentStatus" value={form.employmentStatus} onChange={handleChange} select>
+                      {EMPLOYMENT_STATUS_OPTIONS.map((status) => (
+                        <MenuItem key={status} value={status}>{status}</MenuItem>
+                      ))}
+                    </TextField>
               <TextField fullWidth label="Remarks" name="remarks" value={form.remarks} onChange={handleChange} multiline rows={2} />
             </Stack>
           </SectionBox>
