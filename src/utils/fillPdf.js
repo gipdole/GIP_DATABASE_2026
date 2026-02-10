@@ -1,3 +1,4 @@
+import { borderColor } from "@mui/system";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 
 /**
@@ -158,6 +159,13 @@ export async function fillGIPInfoPDF(pdfUrl, data) {
     page.drawText(data.contactNumber, {
         x: 90,
         y: height - 247,
+        size: 8,
+        font,
+        color: rgb(0, 0, 0),
+    });
+    page.drawText(data.email, {
+        x: 110,
+        y: height - 261,
         size: 8,
         font,
         color: rgb(0, 0, 0),
@@ -438,6 +446,219 @@ export async function fillGIPInfoPDF(pdfUrl, data) {
             color: rgb(0, 0, 0),
         });
     }
+
+    // frame drawing reference
+    // start at an offset at the first line name and address
+
+    page.drawRectangle({
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+
+    page.drawRectangle({
+        x: 407,
+        y: height - 517,
+        width: 174,
+        height: 17,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+    page.drawRectangle({
+        x: 219,
+        y: height - 517,
+        width: 185,
+        height: 17,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+    page.drawRectangle({
+        x: 38,
+        y: height - 517,
+        width: 180,
+        height: 17,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+
+    page.drawRectangle({
+        x: 407,
+        y: height - 534,
+        width: 174,
+        height: 17,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+    page.drawRectangle({
+        x: 219,
+        y: height - 534,
+        width: 185,
+        height: 17,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+    page.drawRectangle({
+        x: 38,
+        y: height - 534,
+        width: 180,
+        height: 17,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+
+    page.drawRectangle({
+        x: 182,
+        y: height - 548,
+        width: 16,
+        height: 12,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+    page.drawRectangle({
+        x: 234,
+        y: height - 548,
+        width: 14,
+        height: 12,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+    page.drawRectangle({
+        x: 274,
+        y: height - 548,
+        width: 14,
+        height: 12,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+    page.drawRectangle({
+        x: 401,
+        y: height - 548,
+        width: 14,
+        height: 12,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+    page.drawRectangle({
+        x: 251,
+        y: height - 567,
+        width: 14,
+        height: 12,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+    page.drawRectangle({
+        x: 337,
+        y: height - 567,
+        width: 200,
+        height: 15,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+
+    page.drawRectangle({
+        x: 80,
+        y: height - 707,
+        width: 223,
+        height: 13,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+    page.drawRectangle({
+        x: 113,
+        y: height - 723,
+        width: 190,
+        height: 13,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+    page.drawRectangle({
+        x: 85,
+        y: height - 739,
+        width: 218,
+        height: 13,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+    page.drawRectangle({
+        x: 390,
+        y: height - 707,
+        width: 191,
+        height: 13,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+    page.drawRectangle({
+        x: 358,
+        y: height - 723,
+        width: 223,
+        height: 13,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+
+    page.drawRectangle({
+        x: 43,
+        y: height - 856,
+        width: 18,
+        height: 14,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+    page.drawRectangle({
+        x: 43,
+        y: height - 872,
+        width: 18,
+        height: 14,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+    page.drawRectangle({
+        x: 43,
+        y: height - 888,
+        width: 18,
+        height: 14,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+    page.drawRectangle({
+        x: 219,
+        y: height - 856,
+        width: 18,
+        height: 14,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+    page.drawRectangle({
+        x: 219,
+        y: height - 872,
+        width: 18,
+        height: 14,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+    page.drawRectangle({
+        x: 219,
+        y: height - 888,
+        width: 18,
+        height: 14,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+    page.drawRectangle({
+        x: 275,
+        y: height - 888,
+        width: 150,
+        height: 14,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
+    page.drawRectangle({
+        x: 427,
+        y: height - 856,
+        width: 18,
+        height: 14,
+        borderWidth: 2,
+        borderColor: rgb(1, 0, 0),
+    });
 
     const pdfBytes = await pdfDoc.save();
     return new Blob([pdfBytes], { type: "application/pdf" });
