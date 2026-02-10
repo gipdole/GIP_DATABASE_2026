@@ -74,13 +74,68 @@ export const deleteEmployee = async (id) => {
 };
 
 /**
+ * Map Excel column names to database field names
+ */
+const mapExcelToDatabaseFields = (excelRow) => {
+  const fieldMap = {
+    'Full Name': 'name',
+    'Start Date': 'startDate',
+    'End Date': 'endDate',
+    'Months Worked': 'monthsWorked',
+    'Birth Date': 'birthDate',
+    'GIP ID': 'gipId',
+    'Valid ID Type': 'validId',
+    'Valid ID Issued At': 'validIdIssued',
+    'Place of Assignment': 'assignmentPlace',
+    'LGU': 'lgu',
+    'Address': 'address',
+    'Contact Number': 'contactNumber',
+    'Email Address': 'email',
+    'Gender': 'gender',
+    'Educational Attainment': 'educationalAttainment',
+    'Primary Degree': 'primaryDegree',
+    'Primary School': 'primarySchool',
+    'Primary Year': 'primaryYear',
+    'Secondary Degree': 'secondaryDegree',
+    'Secondary School': 'secondarySchool',
+    'Secondary Year': 'secondaryYear',
+    'College Degree': 'collegeDegree',
+    'College School': 'collegeSchool',
+    'College Year': 'collegeYear',
+    'Previous Company': 'workCompany',
+    'Previous Position': 'workPosition',
+    'Work Period': 'workPeriod',
+    'Disadvantaged Group': 'disadvantageGroup',
+    'Documents Submitted': 'documentsSubmitted',
+    'ADL No.': 'adlNo',
+    'LBP Account No.': 'lbpAccount',
+    'Emergency Contact Name': 'emergencyName',
+    'Emergency Contact Number': 'emergencyContact',
+    'Emergency Contact Address': 'emergencyAddress',
+    'GSIS Beneficiary Name': 'gsisName',
+    'GSIS Relationship': 'gsisRelationship',
+    'GPAI Link': 'gpaiLink',
+    'Employment Status': 'employmentStatus',
+    'Remarks': 'remarks',
+  };
+
+  const mapped = {};
+  for (const [excelKey, value] of Object.entries(excelRow)) {
+    const dbKey = fieldMap[excelKey] || excelKey;
+    mapped[dbKey] = value;
+  }
+  return mapped;
+};
+
+/**
  * Import multiple employees from Excel file.
  * Skips duplicates (same name + startDate).
  * Auto-generates missing GIP ID.
  * Recalculates monthsWorked and year.
  */
 export const uploadEmployeesFromExcel = async (file, onSuccess) => {
-  const data = await importFromExcel(file);
+  const rawData = await importFromExcel(file);
+  const data = rawData.map(mapExcelToDatabaseFields);
   const snapshot = await getDocs(collection(db, 'employees'));
   const existing = snapshot.docs.map((doc) => doc.data());
 
@@ -94,13 +149,21 @@ export const uploadEmployeesFromExcel = async (file, onSuccess) => {
         e.startDate === row.startDate
     );
 
+    // If duplicate, ask user if they want to accept it
     if (isDuplicate) {
-      skipped++;
-      continue;
+      // eslint-disable-next-line no-restricted-globals
+      const acceptDuplicate = confirm(
+        `Duplicate found\nDo you want to accept this duplicate?`
+      );
+      
+      if (!acceptDuplicate) {
+        skipped++;
+        continue;
+      }
     }
 
     const gipId =
-      row.gipId?.trim() !== ''
+      row.gipId && row.gipId.trim() !== ''
         ? row.gipId
         : await generateNextGipId(row.name, row.startDate);
 
@@ -135,4 +198,32 @@ export const exportSelectedEmployeesToExcel = (selectedRows = []) => {
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Employees');
   XLSX.writeFile(workbook, 'SelectedEmployees.xlsx');
+};
+
+/**
+ * Import employees from Excel file.
+ * Parses the Excel file and returns an array of employee objects.
+ */
+export const importFromExcel = async (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    
+    reader.onload = (event) => {
+      try {
+        const data = new Uint8Array(event.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(worksheet);
+        resolve(rows);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    
+    reader.onerror = () => {
+      reject(new Error('Failed to read file'));
+    };
+    
+    reader.readAsArrayBuffer(file);
+  });
 };

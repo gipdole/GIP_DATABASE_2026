@@ -103,6 +103,8 @@ export const exportTableToExcel = (
     ),
   ];
 
+  
+
   // 3️⃣ Build Excel rows
   const sheetData = rows.map(({ original }) => {
     const row = {};
@@ -138,10 +140,42 @@ export const exportTableToExcel = (
     return row;
   });
 
+  
+
   // 4️⃣ Export
   const worksheet = XLSX.utils.json_to_sheet(sheetData);
   const workbook = XLSX.utils.book_new();
 
   XLSX.utils.book_append_sheet(workbook, worksheet, "Employees");
   XLSX.writeFile(workbook, fileName);
+
+  
+};
+
+/**
+ * Import employees from Excel file.
+ * Parses the Excel file and returns an array of employee objects.
+ */
+export const importFromExcel = async (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    
+    reader.onload = (event) => {
+      try {
+        const data = new Uint8Array(event.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(worksheet);
+        resolve(rows);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    
+    reader.onerror = () => {
+      reject(new Error('Failed to read file'));
+    };
+    
+    reader.readAsArrayBuffer(file);
+  });
 };
