@@ -13,6 +13,7 @@ const EXPORT_SCHEMA = [
   { key: "monthsWorked", label: "Months Worked" },
 
   { key: "birthDate", label: "Birth Date" },
+  { key: "placeOfBirth", label: "Place of Birth"},
   { key: "age", label: "Age" },
   { key: "gender", label: "Gender" },
 
@@ -25,15 +26,23 @@ const EXPORT_SCHEMA = [
 
   { key: "primaryDegree", label: "Primary Degree" },
   { key: "primarySchool", label: "Primary School" },
-  { key: "primaryYear", label: "Primary Year" },
+  { key: "primaryYearFrom", label: "Primary Year From"},
+  { key: "primaryYearTo", label: "Primary Year To" },
 
-  { key: "secondaryDegree", label: "Secondary Degree" },
-  { key: "secondarySchool", label: "Secondary School" },
-  { key: "secondaryYear", label: "Secondary Year" },
+  { key: "secondaryDegree", label: "Junior High Degree" },
+  { key: "secondarySchool", label: "Junior High School" },
+  { key: "secondaryYearFrom", label: "Junior High Year From"},
+  { key: "secondaryYearTo", label: "Junior High Year To" },
+
+  { key: "seniorHighDegree", label: "Senior High Degree" },
+  { key: "seniorHighSchool", label: "Senior High School" },
+  { key: "seniorHighYearFrom", label: "Sinior High Year From"},
+  { key: "seniorHighYearTo", label: "Senior High Year To" },
 
   { key: "collegeDegree", label: "College Degree" },
   { key: "collegeSchool", label: "College School" },
-  { key: "collegeYear", label: "College Year" },
+  { key: "collegeYearFrom", label: "College Year From" },
+  { key: "collegeYearTo", label: "College Year To" },
 
   { key: "workCompany", label: "Previous Company" },
   { key: "workPosition", label: "Previous Position" },

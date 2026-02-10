@@ -177,21 +177,8 @@ export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete =
     { accessorKey: 'email', header: 'Email Address', size: 180, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.email || 'N/A' },
     { accessorKey: 'educationalAttainment', header: 'Education', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.educationalAttainment || 'N/A' },
    
-    { accessorKey: 'primaryDegree',header: 'Primary Degree',size: 160, muiTableHeadCellProps: { sx: headerSx },Cell: ({ row }) => row.original.primaryDegree || 'N/A',},
-    { accessorKey: 'secondaryDegree',header: 'Secondary Degree',size: 160,muiTableHeadCellProps: { sx: headerSx },Cell: ({ row }) => row.original.secondaryDegree || 'N/A',},
-    { accessorKey: 'collegeDegree',header: 'College Degree',size: 180,muiTableHeadCellProps: { sx: headerSx },Cell: ({ row }) => row.original.collegeDegree || 'N/A',},
-    { accessorKey: 'primarySchool',header: 'Primary School',size: 180,muiTableHeadCellProps: { sx: headerSx },Cell: ({ row }) => row.original.primarySchool || 'N/A',},
-    { accessorKey: 'secondarySchool',header: 'Secondary School',size: 180,muiTableHeadCellProps: { sx: headerSx },Cell: ({ row }) => row.original.secondarySchool || 'N/A',},
-    { accessorKey: 'collegeSchool',header: 'College School',size: 200,muiTableHeadCellProps: { sx: headerSx },Cell: ({ row }) => row.original.collegeSchool || 'N/A',},
-    { accessorKey: 'primaryYear',header: 'Primary Year',size: 120,muiTableHeadCellProps: { sx: headerSx },Cell: ({ row }) => row.original.primaryYear || 'N/A',},
-    { accessorKey: 'secondaryYear',header: 'Secondary Year',size: 140,muiTableHeadCellProps: { sx: headerSx },Cell: ({ row }) => row.original.secondaryYear || 'N/A',},
-    { accessorKey: 'collegeYear',header: 'College Year',size: 140,muiTableHeadCellProps: { sx: headerSx },Cell: ({ row }) => row.original.collegeYear || 'N/A',},
-
-    { accessorKey: 'workCompany', header: 'Work - Company', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.workCompany || 'N/A' },
-    { accessorKey: 'workPosition', header: 'Work - Position', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.workPosition || 'N/A' },
-    { accessorKey: 'workPeriod', header: 'Work - Period', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.workPeriod || 'N/A' },
-    { accessorKey: 'disadvantageGroup', header: 'Disadvantage Group', size: 140, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.disadvantageGroup || 'N/A' },
-    { accessorKey: 'documentsSubmitted', header: 'Documents Submitted', size: 140, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.documentsSubmitted || 'N/A' },
+    
+   
     { accessorKey: 'validId', header: 'Valid ID + No.', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.validId || 'N/A' },
     { accessorKey: 'validIdIssued', header: 'ID Issued At', size: 140, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.validIdIssued || 'N/A' },
     { accessorKey: 'assignmentPlace', header: 'Assignment Place', size: 140, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.assignmentPlace || 'N/A' },

@@ -15,6 +15,7 @@ const defaultForm = {
   endDate: '',
   monthsWorked: '',
   birthDate: '',
+  placeOfBirth: '',
   age: '',
   civilStatus: '',
   lgu: '',
@@ -25,20 +26,31 @@ const defaultForm = {
   educationalAttainment: '',
   primaryDegree: '',
   primarySchool: '',
-  primaryYear: '',
+  primaryYearTo: '',
+  primaryYearFrom: '',
   secondaryDegree: '',
   secondarySchool: '',
-  secondaryYear: '',
+  secondaryYearTo: '',
+  secondaryYearFrom: '',
   seniorHighDegree: '',
   seniorHighSchool: '',
-  seniorHighYear: '',
+  seniorHighYearTo: '',
+  seniorHighYearFrom: '',
   collegeDegree: '',
   collegeSchool: '',
-  collegeYear: '',
+  collegeYearTo: '',
+  collegeYearFrom: '',
 
-  workCompany: '',
-  workPosition: '',
-  workPeriod: '',
+  workCompany1: '',
+  workPosition1: '',
+  workPeriod1: '',
+  workCompany2: '',
+  workPosition2: '',
+  workPeriod2: '',
+  workCompany3: '',
+  workPosition3: '',
+  workPeriod3: '',
+  
   disadvantageGroup: '',
   documentsSubmitted: '',
   validId: '',
@@ -70,6 +82,7 @@ const defaultForm = {
   applicationLetter: false,
   barangayCertificate: false,
   othersD: ''
+
 };
 
 const LGU_OPTIONS = [
@@ -271,6 +284,9 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
                   </Stack>
                 </Grid>
               </Grid>
+              <Stack spacing={2}>
+              <TextField fullWidth label="Place of Birth" name="placeOfBirth" value={form.placeOfBirth} onChange={handleChange} />
+              </Stack>
               <Grid container spacing={2}>
                 <Grid item xs={12} size={6}>
                   <Stack spacing={2}>
@@ -297,7 +313,7 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
                 ))}
               </TextField>
               <Grid container spacing={2}>
-                <Grid item xs={12} size={4}>
+                <Grid item xs={12} size={3}>
                   <Stack spacing={2}>
                     <TextField fullWidth label="Primary Degree / Track" name="primaryDegree" value={form.primaryDegree} onChange={handleChange} />
                     <TextField fullWidth label="Junior High School Degree / Track" name="secondaryDegree" value={form.secondaryDegree} onChange={handleChange} />
@@ -305,7 +321,7 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
                     <TextField fullWidth label="College Degree / Course" name="collegeDegree" value={form.collegeDegree} onChange={handleChange} />
                   </Stack>
                 </Grid>
-                <Grid item xs={12} size={4}>
+                <Grid item xs={12} size={3}>
                   <Stack spacing={2}>
                     <TextField fullWidth label="Primary School" name="primarySchool" value={form.primarySchool} onChange={handleChange} />
                     <TextField fullWidth label="Junior High School" name="secondarySchool" value={form.secondarySchool} onChange={handleChange} />
@@ -313,12 +329,20 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
                     <TextField fullWidth label="College School" name="collegeSchool" value={form.collegeSchool} onChange={handleChange} />
                   </Stack>
                 </Grid>
-                <Grid item xs={12} size={4}>
+                <Grid item xs={12} size={3}>
                   <Stack spacing={2}>
-                    <TextField fullWidth label="Primary Year" name="primaryYear" value={form.primaryYear} onChange={handleChange} />
-                    <TextField fullWidth label="Junior High School Year" name="secondaryYear" value={form.secondaryYear} onChange={handleChange} />
-                    <TextField fullWidth label="Senior High Year" name="seniorHighYear" value={form.seniorHighYear} onChange={handleChange} />
-                    <TextField fullWidth label="College Year" name="collegeYear" value={form.collegeYear} onChange={handleChange} />
+                    <TextField fullWidth label="Year From" name="primaryYearFrom" value={form.primaryYearFrom} onChange={handleChange} />
+                    <TextField fullWidth label="Year From" name="secondaryYearFrom" value={form.secondaryYearFrom} onChange={handleChange} />
+                    <TextField fullWidth label="Year From" name="seniorHighYearFrom" value={form.seniorHighYearFrom} onChange={handleChange} />
+                    <TextField fullWidth label="Year From" name="collegeYearFrom" value={form.collegeYearFrom} onChange={handleChange} />
+                  </Stack>
+                </Grid>
+                <Grid item xs={12} size={3}>
+                  <Stack spacing={2}>
+                    <TextField fullWidth label="Year To" name="primaryYearTo" value={form.primaryYearTo} onChange={handleChange} />
+                    <TextField fullWidth label="Year To" name="secondaryYearTo" value={form.secondaryYearTo} onChange={handleChange} />
+                    <TextField fullWidth label="Year To" name="seniorHighYearTo" value={form.seniorHighYearTo} onChange={handleChange} />
+                    <TextField fullWidth label="Year To" name="collegeYearTo" value={form.collegeYearTo} onChange={handleChange} />
                   </Stack>
                 </Grid>
               </Grid>
@@ -329,23 +353,23 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
             <Grid container spacing={2}>
               <Grid item xs={12} size={4}>
                 <Stack spacing={2}>
-                  <TextField fullWidth label="Company Name" name="workCompany" value={form.workCompany} onChange={handleChange} />
-                  <TextField fullWidth label="Company Name" name="workCompany" value={form.workCompany} onChange={handleChange} />
-                  <TextField fullWidth label="Company Name" name="workCompany" value={form.workCompany} onChange={handleChange} />
+                  <TextField fullWidth label="Company Name" name="workCompany1" value={form.workCompany1} onChange={handleChange} />
+                  <TextField fullWidth label="Company Name" name="workCompany2" value={form.workCompany2} onChange={handleChange} />
+                  <TextField fullWidth label="Company Name" name="workCompany3" value={form.workCompany3} onChange={handleChange} />
                 </Stack>
               </Grid>
               <Grid item xs={12} size={4}>
                 <Stack spacing={2}>
-                  <TextField fullWidth label="Position" name="workPosition" value={form.workPosition} onChange={handleChange} />
-                  <TextField fullWidth label="Position" name="workPosition" value={form.workPosition} onChange={handleChange} />
-                  <TextField fullWidth label="Position" name="workPosition" value={form.workPosition} onChange={handleChange} />
+                  <TextField fullWidth label="Position" name="workPosition1" value={form.workPosition1} onChange={handleChange} />
+                  <TextField fullWidth label="Position" name="workPosition2" value={form.workPosition2} onChange={handleChange} />
+                  <TextField fullWidth label="Position" name="workPosition3" value={form.workPosition3} onChange={handleChange} />
                 </Stack>
               </Grid>
               <Grid item xs={12} size={4}>
                 <Stack spacing={2}>
-                  <TextField fullWidth label="Period of Engagement" name="workPeriod" value={form.workPeriod} onChange={handleChange} />
-                  <TextField fullWidth label="Period of Engagement" name="workPeriod" value={form.workPeriod} onChange={handleChange} />
-                  <TextField fullWidth label="Period of Engagement" name="workPeriod" value={form.workPeriod} onChange={handleChange} />
+                  <TextField fullWidth label="Period of Engagement" name="workPeriod1" value={form.workPeriod1} onChange={handleChange} />
+                  <TextField fullWidth label="Period of Engagement" name="workPeriod2" value={form.workPeriod2} onChange={handleChange} />
+                  <TextField fullWidth label="Period of Engagement" name="workPeriod3" value={form.workPeriod3} onChange={handleChange} />
                 </Stack>
               </Grid>
             </Grid>
