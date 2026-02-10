@@ -1,5 +1,5 @@
 // src/components/ViewEmployeeModal.jsx
-import React, { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
     Dialog,
     DialogTitle,
@@ -16,9 +16,46 @@ import { isValid, parseISO, format } from "date-fns";
 
 import GIPExperience from "./GIPExperience";
 import { calculateMonthsAndDaysWorked, formatDuration } from "../utils/dateUtils";
+import { fillGIPInfoPDF } from "../utils/fillPdf";
+
+function GIPInfoPDFPreview({ data }) {
+    const [pdfUrl, setPdfUrl] = useState(null);
+
+    useEffect(() => {
+        let url;
+
+        fillGIPInfoPDF("/GIPEmployeeForm.pdf", data).then((blob) => {
+            url = URL.createObjectURL(blob);
+            setPdfUrl(url);
+        });
+
+        // Cleanup when component unmounts or data changes
+        return () => {
+            if (url) {
+                URL.revokeObjectURL(url);
+                setPdfUrl(null);
+            }
+        };
+    }, [data]);
+
+    if (!pdfUrl) return <div>Loading...</div>;
+
+    return (
+        <iframe
+            id="pdf-iframe"
+            src={pdfUrl}
+            width="100%"
+            height="600px"
+            style={{ border: "none" }}
+            title="Filled PDF Preview"
+        />
+    );
+}
 
 const ViewEmployeeModal = ({ open, onClose, row, allRows }) => {
     if (!row) return null;
+
+    console.log(row);
 
     // Top Duration field
     const durationTop = useMemo(() => {
@@ -46,6 +83,7 @@ const ViewEmployeeModal = ({ open, onClose, row, allRows }) => {
         value === undefined || value === null || value === "" ? fallback : value;
 
     const formatDate = (dateStr) => {
+        if (!dateStr) return "N/A";
         const parsed = parseISO(dateStr);
         return isValid(parsed) ? format(parsed, "MMM dd, yyyy").toUpperCase() : "Invalid";
     };
@@ -66,7 +104,7 @@ const ViewEmployeeModal = ({ open, onClose, row, allRows }) => {
         <Dialog
             open={open}
             onClose={onClose}
-            fullWidth
+            fullScreen
             maxWidth="md"
             aria-labelledby="view-employee-title"
             aria-describedby="view-employee-description"
@@ -78,9 +116,9 @@ const ViewEmployeeModal = ({ open, onClose, row, allRows }) => {
             <DialogContent
                 dividers
                 id="view-employee-description"
-                sx={{ maxHeight: "65vh", overflowY: "auto", display: "flex", justifyContent: "space-between", gap: 3 }}
+                sx={{ maxHeight: "100%", overflowY: "auto", display: "flex", justifyContent: "space-between", gap: 3 }}
             >
-                <Card
+                {/* <Card
                     sx={{
                         display: "flex",
                         flexDirection: "column",
@@ -201,7 +239,51 @@ const ViewEmployeeModal = ({ open, onClose, row, allRows }) => {
                             </Typography>
                         </Box>
                     </CardContent>
-                </Card>
+                </Card> */}
+                {/* <iframe src="/GIPEmployeeForm.pdf" width="100%" height="100%" style={{ border: "none", height:"100dvh" }} /> */}
+                <GIPInfoPDFPreview
+                    data={{
+                        fullName: formatValue(row.name.toUpperCase()),
+                        address: formatValue(row.address),
+                        contactNumber: formatValue(row.contactNumber),
+                        birthDate: formatValue(formatDate(row.birthDate)),
+                        gender: formatValue(row.gender),
+                        civilStatus: formatValue(row.civilStatus),
+                        collegeDegree: formatValue(row.collegeDegree),
+                        collegeYear: formatValue(row.collegeYear),
+                        collegeSchool: formatValue(row.collegeSchool),
+                        seniorHighDegree: formatValue(row.seniorHighDegree),
+                        seniorHighYear: formatValue(row.seniorHighYear),
+                        seniorHighSchool: formatValue(row.seniorHighSchool),
+                        secondaryDegree: formatValue(row.secondaryDegree),
+                        secondaryYear: formatValue(row.secondaryYear),
+                        secondarySchool: formatValue(row.secondarySchool),
+                        primarySchool: formatValue(row.primarySchool),
+                        primaryYear: formatValue(row.primaryYear),
+                        primaryDegree: formatValue(row.primaryDegree),
+                        workCompany: formatValue(row.workCompany),
+                        workPeriod: formatValue(row.workPeriod),
+                        workPosition: formatValue(row.workPosition),
+                        pwd: row.pwd,
+                        iP: row.iP,
+                        victimOfArmedConflict: row.victimOfArmedConflict,
+                        rebelReturnee: row.rebelReturnee,
+                        fourP: row.fourP,
+                        othersDG: formatValue(row.othersDG),
+                        emergencyName: formatValue(row.emergencyName),
+                        emergencyContact: formatValue(row.emergencyContact),
+                        emergencyAddress: formatValue(row.emergencyAddress),
+                        gsisName: formatValue(row.gsisName),
+                        gsisRelationship: formatValue(row.gsisRelationship),
+                        birthCertificate: row.birthCertificate,
+                        transcriptOfRecords: row.transcriptOfRecords,
+                        barangayCertificate: row.barangayCertificate,
+                        form137138: row.form137138,
+                        diploma: row.diploma,
+                        othersD: formatValue(row.othersD),
+                        certificationFromSchool: row.certificationFromSchool,
+                    }}
+                />
             </DialogContent>
 
             <DialogActions>
