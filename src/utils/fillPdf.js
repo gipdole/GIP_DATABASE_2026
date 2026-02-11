@@ -1,5 +1,6 @@
 import { borderColor } from "@mui/system";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import { GIPApplicationFormFrames } from "../constants/GIPApplicationFrames";
 
 /**
  * Helper to draw wrapped text in a pseudo text box.
@@ -76,7 +77,22 @@ export async function fillGIPInfoPDF(pdfUrl, data) {
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const { width, height } = page.getSize();
 
-    const genderCheckBoxPos = {
+    renderField({
+        page,
+        frame: GIPApplicationFormFrames[0].fullName,
+        value: "lorem ",
+        font,
+    });
+    renderField({
+        page,
+        frame: GIPApplicationFormFrames[0].address,
+        value: data.address,
+        font,
+    });
+    drawFrameBorder(page, GIPApplicationFormFrames[0].address, height);
+
+    /*
+const genderCheckBoxPos = {
         male: { x: 144, y: height - 308 },
         female: { x: 231, y: height - 308 },
     };
@@ -141,14 +157,6 @@ export async function fillGIPInfoPDF(pdfUrl, data) {
             });
             break;
     }
-
-    page.drawText(data.fullName, {
-        x: 155,
-        y: height - 155,
-        size: 10,
-        font,
-        color: rgb(0, 0, 0),
-    });
     page.drawText(data.address, {
         x: 45,
         y: height - 205,
@@ -446,220 +454,186 @@ export async function fillGIPInfoPDF(pdfUrl, data) {
             color: rgb(0, 0, 0),
         });
     }
-
-    // frame drawing reference
-    // start at an offset at the first line name and address
-
-    page.drawRectangle({
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-
-    page.drawRectangle({
-        x: 407,
-        y: height - 517,
-        width: 174,
-        height: 17,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-    page.drawRectangle({
-        x: 219,
-        y: height - 517,
-        width: 185,
-        height: 17,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-    page.drawRectangle({
-        x: 38,
-        y: height - 517,
-        width: 180,
-        height: 17,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-
-    page.drawRectangle({
-        x: 407,
-        y: height - 534,
-        width: 174,
-        height: 17,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-    page.drawRectangle({
-        x: 219,
-        y: height - 534,
-        width: 185,
-        height: 17,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-    page.drawRectangle({
-        x: 38,
-        y: height - 534,
-        width: 180,
-        height: 17,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-
-    page.drawRectangle({
-        x: 182,
-        y: height - 548,
-        width: 16,
-        height: 12,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-    page.drawRectangle({
-        x: 234,
-        y: height - 548,
-        width: 14,
-        height: 12,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-    page.drawRectangle({
-        x: 274,
-        y: height - 548,
-        width: 14,
-        height: 12,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-    page.drawRectangle({
-        x: 401,
-        y: height - 548,
-        width: 14,
-        height: 12,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-    page.drawRectangle({
-        x: 251,
-        y: height - 567,
-        width: 14,
-        height: 12,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-    page.drawRectangle({
-        x: 337,
-        y: height - 567,
-        width: 200,
-        height: 15,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-
-    page.drawRectangle({
-        x: 80,
-        y: height - 707,
-        width: 223,
-        height: 13,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-    page.drawRectangle({
-        x: 113,
-        y: height - 723,
-        width: 190,
-        height: 13,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-    page.drawRectangle({
-        x: 85,
-        y: height - 739,
-        width: 218,
-        height: 13,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-    page.drawRectangle({
-        x: 390,
-        y: height - 707,
-        width: 191,
-        height: 13,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-    page.drawRectangle({
-        x: 358,
-        y: height - 723,
-        width: 223,
-        height: 13,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-
-    page.drawRectangle({
-        x: 43,
-        y: height - 856,
-        width: 18,
-        height: 14,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-    page.drawRectangle({
-        x: 43,
-        y: height - 872,
-        width: 18,
-        height: 14,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-    page.drawRectangle({
-        x: 43,
-        y: height - 888,
-        width: 18,
-        height: 14,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-    page.drawRectangle({
-        x: 219,
-        y: height - 856,
-        width: 18,
-        height: 14,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-    page.drawRectangle({
-        x: 219,
-        y: height - 872,
-        width: 18,
-        height: 14,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-    page.drawRectangle({
-        x: 219,
-        y: height - 888,
-        width: 18,
-        height: 14,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-    page.drawRectangle({
-        x: 275,
-        y: height - 888,
-        width: 150,
-        height: 14,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-    page.drawRectangle({
-        x: 427,
-        y: height - 856,
-        width: 18,
-        height: 14,
-        borderWidth: 2,
-        borderColor: rgb(1, 0, 0),
-    });
-
+    */
     const pdfBytes = await pdfDoc.save();
     return new Blob([pdfBytes], { type: "application/pdf" });
+}
+
+/*
+    These functions are used for displaying text within a frame on the pdf
+*/
+function layoutTextInFrame({ text, frame, font, maxFontSize = 11, minFontSize = 6, lineHeightMultiplier = 1 }) {
+    for (let fontSize = maxFontSize; fontSize >= minFontSize; fontSize--) {
+        const lineHeight = fontSize * lineHeightMultiplier;
+        const lines = wrapTextWithOffset({
+            text: text,
+            frame: frame,
+            font: font,
+            fontSize: fontSize,
+        });
+
+        const totalHeight = lines.length * lineHeight;
+        const fitsHeight = totalHeight <= frame.height;
+        const fitsLines = !frame.maxLines || lines.length <= frame.maxLines;
+
+        if (!frame.autosize || (fitsHeight && fitsLines)) {
+            return {
+                lines,
+                fontSize,
+                lineHeight,
+                totalHeight,
+            };
+        }
+    }
+
+    // fallback to minimum size
+    const fontSize = minFontSize;
+    const lineHeight = fontSize * lineHeightMultiplier;
+    const lines = wrapTextWithOffset({
+        text,
+        frame,
+        font,
+        fontSize,
+    });
+
+    console.log("layoutTextInFrame font:", font);
+
+    return {
+        lines,
+        fontSize,
+        lineHeight,
+        totalHeight: lines.length * lineHeight,
+    };
+}
+
+function wrapTextWithOffset({ text, frame, font, fontSize }) {
+    const safeText = String(text ?? "");
+    const paragraphs = safeText.split(/\r?\n/);
+    const lines = [];
+
+    let isFirstLineOverall = true;
+
+    for (const paragraph of paragraphs) {
+        const words = paragraph.trim().split(/\s+/);
+        let currentLine = "";
+
+        for (const word of words) {
+            const testLine = currentLine ? `${currentLine} ${word}` : word;
+
+            const availableWidth = isFirstLineOverall ? frame.width - (frame.offset || 0) : frame.width;
+
+            const textWidth = font.widthOfTextAtSize(testLine, fontSize);
+
+            if (textWidth <= availableWidth) {
+                currentLine = testLine;
+            } else {
+                lines.push({
+                    text: currentLine,
+                    x: isFirstLineOverall ? frame.x + (frame.offset || 0) : frame.x,
+                    width: availableWidth,
+                });
+
+                currentLine = word;
+                isFirstLineOverall = false;
+            }
+        }
+
+        if (currentLine) {
+            const availableWidth = isFirstLineOverall ? frame.width - (frame.offset || 0) : frame.width;
+
+            lines.push({
+                text: currentLine,
+                x: isFirstLineOverall ? frame.x + (frame.offset || 0) : frame.x,
+                width: availableWidth,
+            });
+
+            isFirstLineOverall = false;
+        }
+    }
+
+    console.log("wrapTextWithOffset font:", font);
+
+    return lines;
+}
+
+function computeAlignedX({ lineText, lineX, lineWidth, font, fontSize, alignment = "left" }) {
+    const textWidth = font.widthOfTextAtSize(lineText, fontSize);
+
+    if (alignment === "center") {
+        return lineX + (lineWidth - textWidth) / 2;
+    }
+
+    if (alignment === "right") {
+        return lineX + (lineWidth - textWidth);
+    }
+
+    return lineX;
+}
+
+function renderTextInFrame({ page, frame, layout, font, color }) {
+    const pageHeight = page.getHeight();
+    const frameTopY = pageHeight - frame.y;
+    const frameBottomY = 0;
+    console.log(frame.y, "frameTopY");
+    let currentY = frameTopY - layout.fontSize;
+    for (const line of layout.lines) {
+        const drawX = computeAlignedX({
+            lineText: line.text,
+            lineX: line.x,
+            lineWidth: line.width,
+            font: font,
+            fontSize: layout.fontSize,
+            alignment: frame.alignment,
+        });
+
+        page.drawText(line.text, {
+            x: drawX,
+            y: currentY,
+            size: layout.fontSize,
+            font,
+            color,
+        });
+
+        currentY -= layout.lineHeight;
+
+        if (currentY < frameBottomY) break;
+    }
+}
+
+function renderField({ page, frame, value, font, color }) {
+    const layout = layoutTextInFrame({
+        text: value,
+        frame: frame,
+        font: font,
+    });
+
+    renderTextInFrame({
+        page: page,
+        frame: frame,
+        layout: layout,
+        font: font,
+        color: color,
+    });
+
+    console.log("renderField font:", font);
+}
+
+function drawFrameBorder(page, frame, pageHeight, options = {}) {
+    const {
+        borderColor = rgb(1, 0, 0), // red by default
+        borderWidth = 1,
+        fillColor = undefined, // optional fill
+    } = options;
+
+    const y = pageHeight - frame.y;
+
+    page.drawRectangle({
+        x: frame.x,
+        y: y,
+        width: frame.width,
+        height: frame.height,
+        borderColor,
+        borderWidth,
+        color: fillColor, // optional
+    });
 }
