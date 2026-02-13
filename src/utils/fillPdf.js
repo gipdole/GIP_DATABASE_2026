@@ -142,7 +142,8 @@ export async function fillGIPInfoPDF(pdfUrl, data) {
             });
             break;
     }
-    page.drawText(data.fullName, {
+    const name = data.fullName ? data.fullName.toUpperCase() : "";
+    page.drawText(name, {
         x: 45,
         y: height - 157,
         size: 8,

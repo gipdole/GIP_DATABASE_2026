@@ -17,6 +17,7 @@ import { isValid, parseISO, format } from "date-fns";
 import GIPExperience from "./GIPExperience";
 import { calculateMonthsAndDaysWorked, formatDuration } from "../utils/dateUtils";
 import { fillGIPInfoPDF } from "../utils/fillPdf";
+import gipEmployeeForm from "../assets/GIPEmployeeForm.pdf";
 
 function GIPInfoPDFPreview({ data }) {
     const [pdfUrl, setPdfUrl] = useState(null);
@@ -24,7 +25,7 @@ function GIPInfoPDFPreview({ data }) {
     useEffect(() => {
         let url;
 
-        fillGIPInfoPDF("/GIPEmployeeForm.pdf", data).then((blob) => {
+        fillGIPInfoPDF(gipEmployeeForm, data).then((blob) => {
             url = URL.createObjectURL(blob);
             setPdfUrl(url);
         });
@@ -243,7 +244,7 @@ const ViewEmployeeModal = ({ open, onClose, row, allRows }) => {
                 {/* <iframe src="/GIPEmployeeForm.pdf" width="100%" height="100%" style={{ border: "none", height:"100dvh" }} /> */}
                 <GIPInfoPDFPreview
                     data={{
-                        fullName: formatValue(row.name.toUpperCase()),
+                        fullName: formatValue(row.name),
                         address: formatValue(row.address),
                         contactNumber: formatValue(row.contactNumber),
                         email: formatValue(row.email),
