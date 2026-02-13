@@ -77,22 +77,7 @@ export async function fillGIPInfoPDF(pdfUrl, data) {
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const { width, height } = page.getSize();
 
-    renderField({
-        page,
-        frame: GIPApplicationFormFrames[0].fullName,
-        value: "lorem ",
-        font,
-    });
-    renderField({
-        page,
-        frame: GIPApplicationFormFrames[0].address,
-        value: data.address,
-        font,
-    });
-    drawFrameBorder(page, GIPApplicationFormFrames[0].address, height);
-
-    /*
-const genderCheckBoxPos = {
+    const genderCheckBoxPos = {
         male: { x: 144, y: height - 308 },
         female: { x: 231, y: height - 308 },
     };
@@ -157,6 +142,13 @@ const genderCheckBoxPos = {
             });
             break;
     }
+    page.drawText(data.fullName, {
+        x: 45,
+        y: height - 157,
+        size: 8,
+        font,
+        color: rgb(0, 0, 0),
+    });
     page.drawText(data.address, {
         x: 45,
         y: height - 205,
@@ -454,7 +446,7 @@ const genderCheckBoxPos = {
             color: rgb(0, 0, 0),
         });
     }
-    */
+
     const pdfBytes = await pdfDoc.save();
     return new Blob([pdfBytes], { type: "application/pdf" });
 }
@@ -462,178 +454,3 @@ const genderCheckBoxPos = {
 /*
     These functions are used for displaying text within a frame on the pdf
 */
-function layoutTextInFrame({ text, frame, font, maxFontSize = 11, minFontSize = 6, lineHeightMultiplier = 1 }) {
-    for (let fontSize = maxFontSize; fontSize >= minFontSize; fontSize--) {
-        const lineHeight = fontSize * lineHeightMultiplier;
-        const lines = wrapTextWithOffset({
-            text: text,
-            frame: frame,
-            font: font,
-            fontSize: fontSize,
-        });
-
-        const totalHeight = lines.length * lineHeight;
-        const fitsHeight = totalHeight <= frame.height;
-        const fitsLines = !frame.maxLines || lines.length <= frame.maxLines;
-
-        if (!frame.autosize || (fitsHeight && fitsLines)) {
-            return {
-                lines,
-                fontSize,
-                lineHeight,
-                totalHeight,
-            };
-        }
-    }
-
-    // fallback to minimum size
-    const fontSize = minFontSize;
-    const lineHeight = fontSize * lineHeightMultiplier;
-    const lines = wrapTextWithOffset({
-        text,
-        frame,
-        font,
-        fontSize,
-    });
-
-    console.log("layoutTextInFrame font:", font);
-
-    return {
-        lines,
-        fontSize,
-        lineHeight,
-        totalHeight: lines.length * lineHeight,
-    };
-}
-
-function wrapTextWithOffset({ text, frame, font, fontSize }) {
-    const safeText = String(text ?? "");
-    const paragraphs = safeText.split(/\r?\n/);
-    const lines = [];
-
-    let isFirstLineOverall = true;
-
-    for (const paragraph of paragraphs) {
-        const words = paragraph.trim().split(/\s+/);
-        let currentLine = "";
-
-        for (const word of words) {
-            const testLine = currentLine ? `${currentLine} ${word}` : word;
-
-            const availableWidth = isFirstLineOverall ? frame.width - (frame.offset || 0) : frame.width;
-
-            const textWidth = font.widthOfTextAtSize(testLine, fontSize);
-
-            if (textWidth <= availableWidth) {
-                currentLine = testLine;
-            } else {
-                lines.push({
-                    text: currentLine,
-                    x: isFirstLineOverall ? frame.x + (frame.offset || 0) : frame.x,
-                    width: availableWidth,
-                });
-
-                currentLine = word;
-                isFirstLineOverall = false;
-            }
-        }
-
-        if (currentLine) {
-            const availableWidth = isFirstLineOverall ? frame.width - (frame.offset || 0) : frame.width;
-
-            lines.push({
-                text: currentLine,
-                x: isFirstLineOverall ? frame.x + (frame.offset || 0) : frame.x,
-                width: availableWidth,
-            });
-
-            isFirstLineOverall = false;
-        }
-    }
-
-    console.log("wrapTextWithOffset font:", font);
-
-    return lines;
-}
-
-function computeAlignedX({ lineText, lineX, lineWidth, font, fontSize, alignment = "left" }) {
-    const textWidth = font.widthOfTextAtSize(lineText, fontSize);
-
-    if (alignment === "center") {
-        return lineX + (lineWidth - textWidth) / 2;
-    }
-
-    if (alignment === "right") {
-        return lineX + (lineWidth - textWidth);
-    }
-
-    return lineX;
-}
-
-function renderTextInFrame({ page, frame, layout, font, color }) {
-    const pageHeight = page.getHeight();
-    const frameTopY = pageHeight - frame.y;
-    const frameBottomY = 0;
-    console.log(frame.y, "frameTopY");
-    let currentY = frameTopY - layout.fontSize;
-    for (const line of layout.lines) {
-        const drawX = computeAlignedX({
-            lineText: line.text,
-            lineX: line.x,
-            lineWidth: line.width,
-            font: font,
-            fontSize: layout.fontSize,
-            alignment: frame.alignment,
-        });
-
-        page.drawText(line.text, {
-            x: drawX,
-            y: currentY,
-            size: layout.fontSize,
-            font,
-            color,
-        });
-
-        currentY -= layout.lineHeight;
-
-        if (currentY < frameBottomY) break;
-    }
-}
-
-function renderField({ page, frame, value, font, color }) {
-    const layout = layoutTextInFrame({
-        text: value,
-        frame: frame,
-        font: font,
-    });
-
-    renderTextInFrame({
-        page: page,
-        frame: frame,
-        layout: layout,
-        font: font,
-        color: color,
-    });
-
-    console.log("renderField font:", font);
-}
-
-function drawFrameBorder(page, frame, pageHeight, options = {}) {
-    const {
-        borderColor = rgb(1, 0, 0), // red by default
-        borderWidth = 1,
-        fillColor = undefined, // optional fill
-    } = options;
-
-    const y = pageHeight - frame.y;
-
-    page.drawRectangle({
-        x: frame.x,
-        y: y,
-        width: frame.width,
-        height: frame.height,
-        borderColor,
-        borderWidth,
-        color: fillColor, // optional
-    });
-}
