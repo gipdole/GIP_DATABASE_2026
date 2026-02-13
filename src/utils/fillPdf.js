@@ -179,108 +179,108 @@ export async function fillGIPInfoPDF(pdfUrl, data) {
     });
 
     page.drawText(data.collegeSchool, {
-        x: 95,
+        x: 40,
         y: height - 392,
-        size: 10,
+        size: 8,
         font,
         color: rgb(0, 0, 0),
     });
     page.drawText(data.collegeYear, {
         x: 345,
         y: height - 392,
-        size: 10,
+        size: 8,
         font,
         color: rgb(0, 0, 0),
     });
     page.drawText(data.collegeDegree, {
-        x: 458,
+        x: 409,
         y: height - 392,
-        size: 10,
+        size: 8,
         font,
         color: rgb(0, 0, 0),
     });
     page.drawText(data.seniorHighSchool, {
-        x: 95,
+        x: 40,
         y: height - 410,
-        size: 10,
+        size: 8,
         font,
         color: rgb(0, 0, 0),
     });
     page.drawText(data.seniorHighYear, {
         x: 345,
         y: height - 410,
-        size: 10,
+        size: 8,
         font,
         color: rgb(0, 0, 0),
     });
     page.drawText(data.seniorHighDegree, {
-        x: 458,
+        x: 409,
         y: height - 410,
-        size: 10,
+        size: 8,
         font,
         color: rgb(0, 0, 0),
     });
     page.drawText(data.secondarySchool, {
-        x: 95,
+        x: 40,
         y: height - 428,
-        size: 10,
+        size: 8,
         font,
         color: rgb(0, 0, 0),
     });
     page.drawText(data.secondaryYear, {
         x: 345,
         y: height - 428,
-        size: 10,
+        size: 8,
         font,
         color: rgb(0, 0, 0),
     });
     page.drawText(data.secondaryDegree, {
-        x: 458,
+        x: 409,
         y: height - 428,
-        size: 10,
+        size: 8,
         font,
         color: rgb(0, 0, 0),
     });
     page.drawText(data.primarySchool, {
-        x: 95,
+        x: 40,
         y: height - 448,
-        size: 10,
+        size: 8,
         font,
         color: rgb(0, 0, 0),
     });
     page.drawText(data.primaryYear, {
         x: 345,
         y: height - 448,
-        size: 10,
+        size: 8,
         font,
         color: rgb(0, 0, 0),
     });
     page.drawText(data.primaryDegree, {
-        x: 458,
+        x: 409,
         y: height - 448,
-        size: 10,
+        size: 8,
         font,
         color: rgb(0, 0, 0),
     });
 
     page.drawText(data.workCompany, {
-        x: 95,
+        x: 40,
         y: height - 495,
-        size: 10,
+        size: 8,
         font,
         color: rgb(0, 0, 0),
     });
     page.drawText(data.workPosition, {
-        x: 295,
+        x: 220,
         y: height - 495,
-        size: 10,
+        size: 8,
         font,
         color: rgb(0, 0, 0),
     });
     page.drawText(data.workPeriod, {
-        x: 470,
+        x: 409,
         y: height - 495,
-        size: 10,
+        size: 8,
         font,
         color: rgb(0, 0, 0),
     });
