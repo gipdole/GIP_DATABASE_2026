@@ -1,4 +1,6 @@
+import { borderColor } from "@mui/system";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import { GIPApplicationFormFrames } from "../constants/GIPApplicationFrames";
 
 /**
  * Helper to draw wrapped text in a pseudo text box.
@@ -140,11 +142,10 @@ export async function fillGIPInfoPDF(pdfUrl, data) {
             });
             break;
     }
-
     page.drawText(data.fullName, {
-        x: 155,
-        y: height - 155,
-        size: 10,
+        x: 45,
+        y: height - 157,
+        size: 8,
         font,
         color: rgb(0, 0, 0),
     });
@@ -158,6 +159,13 @@ export async function fillGIPInfoPDF(pdfUrl, data) {
     page.drawText(data.contactNumber, {
         x: 90,
         y: height - 247,
+        size: 8,
+        font,
+        color: rgb(0, 0, 0),
+    });
+    page.drawText(data.email, {
+        x: 110,
+        y: height - 261,
         size: 8,
         font,
         color: rgb(0, 0, 0),
@@ -442,3 +450,7 @@ export async function fillGIPInfoPDF(pdfUrl, data) {
     const pdfBytes = await pdfDoc.save();
     return new Blob([pdfBytes], { type: "application/pdf" });
 }
+
+/*
+    These functions are used for displaying text within a frame on the pdf
+*/

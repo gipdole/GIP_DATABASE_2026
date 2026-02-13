@@ -246,6 +246,7 @@ const ViewEmployeeModal = ({ open, onClose, row, allRows }) => {
                         fullName: formatValue(row.name.toUpperCase()),
                         address: formatValue(row.address),
                         contactNumber: formatValue(row.contactNumber),
+                        email: formatValue(row.email),
                         birthDate: formatValue(formatDate(row.birthDate)),
                         gender: formatValue(row.gender),
                         civilStatus: formatValue(row.civilStatus),
