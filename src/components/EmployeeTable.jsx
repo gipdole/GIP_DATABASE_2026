@@ -15,7 +15,7 @@ import {
   uploadEmployeesFromExcel,
 } from '../utils/firebaseHelpers';
 
-import {getAllColumns } from '../utils/columns';
+import { getAllColumns } from '../utils/columns';
 import EmployeeFormModal from './EmployeeFormModal';
 import ViewEmployeeModal from './ViewEmployeeModal';
 
@@ -102,12 +102,39 @@ const EmployeeTable = () => {
     renderBottomToolbar: false,
     renderTopToolbarCustomActions: () => (
       <Box sx={{ display: 'flex', gap: 1, px: 0.5 }}>
-        <Button size="small" variant="contained" onClick={handleAdd}>Add</Button>
-        <Button size="small" variant="outlined" component="label">
+        <Button size="small" variant="contained" sx={{ backgroundColor: "#55C386", color: '#000000' }} onClick={handleAdd}>Add</Button>
+        <Button
+          size="small"
+          variant="outlined"
+          component="label"
+          sx={{
+            borderColor: "#55C386",
+            color: "#55C386",
+            "&:hover": {
+              borderColor: "#2E7D32",
+              backgroundColor: "rgba(85,195,134,0.08)",
+            },
+          }}
+        >
           Import
           <input type="file" hidden accept=".xlsx, .xls" onChange={handleImportExcel} />
         </Button>
-        <Button size="small" variant="outlined" onClick={handleExportSelectedExcel}>Export</Button>
+
+        <Button
+          size="small"
+          variant="outlined"
+          onClick={handleExportSelectedExcel}
+          sx={{
+            borderColor: "#55C386",
+            color: "#55C386",
+            "&:hover": {
+              borderColor: "#2E7D32",
+              backgroundColor: "rgba(85,195,134,0.08)",
+            },
+          }}
+        >
+          Export
+        </Button>
       </Box>
     ),
     customSortingFns: { lguSort: lguSortFn, dateAsc: dateSortFn },

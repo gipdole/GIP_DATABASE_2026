@@ -5,6 +5,8 @@ import EmployeeTable from "./components/EmployeeTable.jsx";
 import { useNavigate } from "react-router";
 import { AuthContext } from "./components/context/AuthProvider.jsx";
 
+import LogoutIcon from '@mui/icons-material/Logout';
+
 function App() {
     const { logOut } = useContext(AuthContext);
 
@@ -25,11 +27,42 @@ function App() {
             <CssBaseline />
             <Box sx={{ flexGrow: 1 }}>
                 <AppBar position="fixed">
-                    <Toolbar>
-                        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                            GIP Database
-                        </Typography>
-                        <Button color="inherit" onClick={handleSignOut}>
+                    <Toolbar sx={{ backgroundColor: "#55C386", color: "#000" }}>
+                        <Box
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                                flexGrow: 1,
+                            }}
+                        >
+                            <Box
+                                component="img"
+                                src="/gip2026.png"   // put logo in /public
+                                alt="GIP Logo"
+                                sx={{
+                                    height: 32,
+                                    width: 32,
+                                }}
+                            />
+
+                            <Typography variant="h6" component="div" fontWeight="bold">
+                                GIP Database
+                            </Typography>
+                        </Box>
+
+                        <Button
+                            onClick={handleSignOut}
+                            startIcon={<LogoutIcon />}
+                            sx={{
+                                color: "#000",
+                                fontWeight: 600,
+                                textTransform: "none",
+                                "&:hover": {
+                                    backgroundColor: "rgba(0,0,0,0.08)",
+                                },
+                            }}
+                        >
                             Logout
                         </Button>
                     </Toolbar>
