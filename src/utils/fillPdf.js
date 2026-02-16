@@ -1,7 +1,6 @@
-import { borderColor } from "@mui/system";
+import { border, borderColor, fontSize } from "@mui/system";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
-import { GIPApplicationFormFrames } from "../constants/GIPApplicationFrames";
-
+import {employee_info} from "./gip_view_employee_pdf.js";
 /**
  * Helper to draw wrapped text in a pseudo text box.
  */
@@ -75,9 +74,13 @@ export async function fillGIPInfoPDF(pdfUrl, data) {
     const pdfDoc = await PDFDocument.load(GIPPDF);
     const page = pdfDoc.getPages()[0];
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const checkFont = await pdfDoc.embedFont(StandardFonts.ZapfDingbats);
     const { width, height } = page.getSize();
 
-    const genderCheckBoxPos = {
+     drawEmployeeInfo(page, data, font, checkFont, height);
+
+    /*
+        const genderCheckBoxPos = {
         male: { x: 144, y: height - 308 },
         female: { x: 231, y: height - 308 },
     };
@@ -447,6 +450,7 @@ export async function fillGIPInfoPDF(pdfUrl, data) {
             color: rgb(0, 0, 0),
         });
     }
+    */
 
     const pdfBytes = await pdfDoc.save();
     return new Blob([pdfBytes], { type: "application/pdf" });
@@ -455,3 +459,178 @@ export async function fillGIPInfoPDF(pdfUrl, data) {
 /*
     These functions are used for displaying text within a frame on the pdf
 */
+function drawTextInFrame(page, text, frame, options = {}) {
+    const {
+        font,
+        fontSize = 8,
+        lineHeight = fontSize * 1.25,
+        color = rgb(0, 0, 0),
+        align = "left",
+        verticalAlign = "top",
+        padding = 0,
+        drawBorder = false,
+        borderColor = rgb(0, 0, 0),
+        borderWidth = 1,
+    } = options;
+
+    const { x, y, height, width } = frame;
+
+    // Draw border if requested
+    if (drawBorder) {
+        page.drawRectangle({
+            x: x,
+            y: y,
+            width: width,
+            height: height,
+            borderColor: borderColor,
+            borderWidth: borderWidth,
+        });
+    }
+
+    // Calculate content area (frame minus padding)
+    const contentWidth = width - (padding * 2);
+    const contentHeight = height - (padding * 2);
+    const contentX = x + padding;
+
+    // Wrap text into lines
+    const lines = wrapText(text, font, fontSize, contentWidth);
+
+    // Calculate total text block height
+    const totalTextHeight = lines.length * lineHeight;
+
+    // Calculate starting Y position based on vertical alignment
+    let startY;
+    if (verticalAlign === "top") {
+        startY = y + height - padding - fontSize; // Start from top
+    } else if (verticalAlign === "middle") {
+        startY = y + (height + totalTextHeight) / 2 - fontSize;
+    } else if (verticalAlign === "bottom") {
+        startY = y + totalTextHeight + padding - fontSize;
+    }
+
+    // Draw each line
+    lines.forEach((line, index) => {
+        const yPosition = startY - (index * lineHeight);
+
+        // Only draw if within frame bounds
+        if (yPosition >= y && yPosition <= y + height) {
+            const xPosition = alignText(line, font, fontSize, contentX, contentWidth, align);
+
+            page.drawText(line, {
+                x: xPosition,
+                y: yPosition,
+                size: fontSize,
+                font: font,
+                color: color,
+            });
+        }
+    });
+
+    return lines.length; // Return number of lines drawn
+}
+
+function wrapText(text, font, fontSize, maxWidth) {
+    const words = text.split(' ');
+    const lines = [];
+    let currentLine = '';
+
+    for (const word of words) {
+        const testLine = currentLine ? `${currentLine} ${word}` : word;
+        const testWidth = font.widthOfTextAtSize(testLine, fontSize);
+
+        if (testWidth > maxWidth && currentLine) {
+            // Current line is full, start new line
+            lines.push(currentLine);
+            currentLine = word;
+        } else {
+            // Word fits, add it to current line
+            currentLine = testLine;
+        }
+    }
+
+    // Push the last line
+    if (currentLine) {
+        lines.push(currentLine);
+    }
+
+    return lines;
+}
+
+function alignText(text, font, fontSize, startX, maxWidth, align) {
+    if (align === "left") {
+        return startX;
+    }
+
+    const textWidth = font.widthOfTextAtSize(text, fontSize);
+
+    if (align === "center") {
+        return startX + (maxWidth - textWidth) / 2;
+    }
+
+    if (align === "right") {
+        return startX + maxWidth - textWidth;
+    }
+
+    return startX; // Default to left
+}
+
+function drawEmployeeInfo(page, data, font, checkFont, height) {
+    employee_info.forEach(field => {
+        if (field.id === "gender" || field.id === "civilStatus") {
+            handleSpecialField(page, data, field, checkFont, height);
+            return;
+        }
+
+        const value = data[field.id];
+        if (!value) return;
+
+        drawTextInFrame(
+            page,
+            value,
+            {
+                x: field.x,
+                y: height - field.y,
+                width: field.width || 150,
+                height: field.height || 15,
+            },
+            {
+                font: font,
+                fontSize: field.size,
+                padding: field.padding || 0,
+                drawBorder: field.drawBorder || false,
+                align: field.align || "left",
+                verticalAlign: field.verticalAlign || "middle",
+                padding: field.padding ?? 0,
+                color: rgb(0, 0, 0),
+                drawBorder: true,
+            }
+        );
+    });
+}
+
+function handleSpecialField(page, data, field, checkFont, height) {
+    if (field.id === "gender") {
+        const genderValue = data.gender?.toLowerCase();
+        const pos = field.genderPos[genderValue];
+        if (pos) {
+            drawCheckmark(page, pos.x, height - pos.y, checkFont, field.size);
+        }
+    } else if (field.id === "civilStatus") {
+        const statusValue = data.civilStatus?.toLowerCase();
+        const pos = field.civilStatusPos[statusValue];
+        if (pos) {
+            drawCheckmark(page, pos.x, height - pos.y, checkFont, field.size);
+        }
+    }
+}
+
+// Helper function to draw checkmark or X
+function drawCheckmark(page, x, y, checkFont, size) {
+    page.drawText("\u2713", {
+        x: x,
+        y: y,
+        size: size,
+        font: checkFont,
+        color: rgb(0, 0, 0),
+    });
+}
