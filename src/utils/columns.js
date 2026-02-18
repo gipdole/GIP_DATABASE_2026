@@ -149,7 +149,7 @@ export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete =
     },
     {
       accessorKey: 'birthDate',
-      header: 'Birth',
+      header: 'Birth Date',
       size: 90,
       enableColumnFilter: false,
       muiTableHeadCellProps: { sx: headerSx },

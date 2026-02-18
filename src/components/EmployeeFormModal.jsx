@@ -255,6 +255,13 @@ useEffect(() => {
         <Stack spacing={2}>
           <SectionBox title="Personal Information">
             <Stack spacing={2}>
+              <TextField
+                  fullWidth
+                  label="GIP ID"
+                  name="gipId"
+                  value={form.gipId}
+                  onChange={handleChange}
+                />
               <Grid container spacing={2}>
                 <Grid item xs={12} size={8}>
                   <Stack spacing={2}>
@@ -263,16 +270,6 @@ useEffect(() => {
                 </Grid>
                 <Grid item xs={12} size={4}>
                   <Stack spacing={2}>
-
-                {/* rafaellllll */}
-                <TextField
-                  fullWidth
-                  label="GIP ID"
-                  name="gipId"
-                  value={form.gipId}
-                  onChange={handleChange}
-                />
-
                     <TextField fullWidth label="Gender" name="gender" value={form.gender} onChange={handleChange} select>
                       {GENDER_OPTIONS.map((gender) => (
                         <MenuItem key={gender} value={gender}>{gender}</MenuItem>
