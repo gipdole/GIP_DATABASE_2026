@@ -23,8 +23,9 @@ import { calculateMonthsWorked } from "../utils/dateUtils";
 
 const defaultForm = {
     name: "",
-    dateHired: "",
-    dateEnded: "",
+    gipId: "",
+    startDate: "",
+    endDate: "",
     monthsWorked: "",
     birthDate: "",
     placeOfBirth: "",
@@ -193,24 +194,29 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
     // Auto-generate GIP ID
     useEffect(() => {
         const autoGenerateGipId = async () => {
-            if (
-                form.gipId || // user already typed
-                !form.name?.trim() || // no name yet
-                !form.dateHired // no Date Hired yet
-            ) {
-                return;
-            }
+            // ❌ Never auto-generate in edit mode
+            if (isEditMode) return;
+
+            // ❌ If already has value (user typed or already generated)
+            if (form.gipId?.trim()) return;
+
+            // ❌ If missing required data
+            if (!form.name?.trim() || !form.startDate) return;
 
             try {
-                const generated = await generateNextGipId(form.name.trim(), form.dateHired);
-                setForm((prev) => ({ ...prev, gipId: generated }));
+                const generated = await generateNextGipId(form.name.trim(), form.startDate);
+
+                setForm((prev) => ({
+                    ...prev,
+                    gipId: generated,
+                }));
             } catch (err) {
                 console.error("Auto GIP ID generation failed:", err);
             }
         };
 
         autoGenerateGipId();
-    }, [form.gipId, form.name, form.dateHired]); // ✅ added form.gipId
+    }, [form.name, form.startDate, isEditMode]);
 
     // Handlers
     const handleChange = (e) => {
@@ -271,6 +277,13 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
                 <Stack spacing={2}>
                     <SectionBox title="Personal Information">
                         <Stack spacing={2}>
+                            <TextField
+                                fullWidth
+                                label="GIP ID"
+                                name="gipId"
+                                value={form.gipId}
+                                onChange={handleChange}
+                            />
                             <Grid container spacing={2}>
                                 <Grid item xs={12} size={8}>
                                     <Stack spacing={2}>

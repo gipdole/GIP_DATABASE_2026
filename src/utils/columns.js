@@ -103,17 +103,17 @@ export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete =
             Cell: ({ row }) => row.original.gipId?.toUpperCase() || "N/A",
         },
         {
-            accessorKey: "dateHired",
-            header: "Date Hired",
+            accessorKey: "startDate",
+            header: "Start Date",
             size: 110,
             enableColumnFilter: false,
             muiTableHeadCellProps: { sx: headerSx },
             muiTableBodyCellProps: { sx: { pl: 1.5 } },
-            Cell: ({ row }) => formatDate(row.original.dateHired),
+            Cell: ({ row }) => formatDate(row.original.startDate),
             sortingFn: (rowA, rowB) => {
                 const a = rowA.original;
                 const b = rowB.original;
-                const dateCompare = new Date(b.dateHired) - new Date(a.dateHired);
+                const dateCompare = new Date(b.startDate) - new Date(a.startDate);
                 if (dateCompare !== 0) return dateCompare;
                 const lguCompare = getLguOrderIndex(a.lgu) - getLguOrderIndex(b.lgu);
                 if (lguCompare !== 0) return lguCompare;
@@ -121,12 +121,12 @@ export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete =
             },
         },
         {
-            accessorKey: "dateEnded",
-            header: "Date Ended",
+            accessorKey: "endDate",
+            header: "End Date",
             size: 110,
             enableColumnFilter: false,
             muiTableHeadCellProps: { sx: headerSx },
-            Cell: ({ row }) => formatDate(row.original.dateEnded),
+            Cell: ({ row }) => formatDate(row.original.endDate),
         },
         {
             accessorKey: "monthsWorked",
@@ -163,7 +163,7 @@ export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete =
         },
         {
             accessorKey: "birthDate",
-            header: "Birth",
+            header: "Birth Date",
             size: 90,
             enableColumnFilter: false,
             muiTableHeadCellProps: { sx: headerSx },
