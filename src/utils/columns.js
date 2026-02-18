@@ -192,6 +192,24 @@ export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete =
     { accessorKey: 'seniorHighYearTo', header: 'Senior High To', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.seniorHighYearTo || 'N/A' },
     { accessorKey: 'seniorHighYearFrom', header: 'Senior High From', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.seniorHighYearFrom || 'N/A' },
 
+    { accessorKey: 'collegeDegree', header: 'College Degree', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.collegeDegree || 'N/A' },
+    { accessorKey: 'collegeSchool', header: 'College School', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.collegeSchool || 'N/A' },
+    { accessorKey: 'collegeYearTo', header: 'College To', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.collegeYearTo || 'N/A' },
+    { accessorKey: 'collegeYearFrom', header: 'College From', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.collegeYearFrom || 'N/A' },
+
+    { accessorKey: 'workCompany1', header: 'Work Company 1', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.workCompany1 || 'N/A' },
+    { accessorKey: 'workPosition1', header: 'Work Position 1', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.workPosition1 || 'N/A' },
+    { accessorKey: 'workPeriod1', header: 'Work Period 1', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.workPeriod1 || 'N/A' },
+
+    { accessorKey: 'workCompany2', header: 'Work Company 2', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.workCompany2 || 'N/A' },
+    { accessorKey: 'workPosition2', header: 'Work Position 2', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.workPosition2 || 'N/A' },
+    { accessorKey: 'workPeriod2', header: 'Work Period 2', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.workPeriod2 || 'N/A' },
+
+    { accessorKey: 'workCompany3', header: 'Work Company 3', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.workCompany3 || 'N/A' },
+    { accessorKey: 'workPosition3', header: 'Work Position 3', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.workPosition3 || 'N/A' },
+    { accessorKey: 'workPeriod3', header: 'Work Period 3', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.workPeriod3 || 'N/A' },
+
+
     { accessorKey: 'disadvantageGroup', header: 'Disadvantage Group', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.disadvantageGroup || 'N/A' },
     
     { accessorKey: 'documentsSubmitted', header: 'Documents Submitted', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.documentsSubmitted || 'N/A' },
@@ -220,7 +238,7 @@ export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete =
     { accessorKey: 'gpaiLink', header: 'GPAI Link', size: 200, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.gpaiLink || 'N/A' },
 
     { accessorKey: 'employmentStatus', header: 'Employment Status', size: 140, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.employmentStatus || 'N/A' },
-    
+
     { accessorKey: 'remarks', header: 'Remarks', size: 200, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.remarks || 'N/A' },
   ];
 };
