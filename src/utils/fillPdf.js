@@ -252,7 +252,7 @@ function handleSpecialField(page, data, field, checkFont, height) {
             drawCheckmark(page, pos.x, height - pos.y, checkFont, field.size);
         }
     }
-    if (field.id === "othersDCheck" && data.othersDG) {
+    if (field.id === "othersDCheck" && data.othersDG && data.othersDG !== "N/A") {
         drawCheckmark(page, field.x, height - field.y, checkFont, field.size);
     }
     const isChecked = data[field.id];

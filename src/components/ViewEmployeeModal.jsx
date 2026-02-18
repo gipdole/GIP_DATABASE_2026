@@ -60,8 +60,8 @@ const ViewEmployeeModal = ({ open, onClose, row, allRows }) => {
 
     // Top Duration field
     // const durationTop = useMemo(() => {
-    //     return formatDuration(calculateMonthsAndDaysWorked(row.startDate, row.endDate));
-    // }, [row.startDate, row.endDate]);
+    //     return formatDuration(calculateMonthsAndDaysWorked(row.dateHired, row.dateEnded));
+    // }, [row.dateHired, row.dateEnded]);
 
     // // Total GIP experience across all entries
     // const totalExperience = useMemo(() => {
@@ -69,7 +69,7 @@ const ViewEmployeeModal = ({ open, onClose, row, allRows }) => {
 
     //     const total = entries.reduce(
     //         (acc, entry) => {
-    //             const { months, days } = calculateMonthsAndDaysWorked(entry.startDate, entry.endDate);
+    //             const { months, days } = calculateMonthsAndDaysWorked(entry.dateHired, entry.dateEnded);
     //             acc.months += months;
     //             acc.days += days;
     //             return acc;
@@ -119,129 +119,6 @@ const ViewEmployeeModal = ({ open, onClose, row, allRows }) => {
                 id="view-employee-description"
                 sx={{ maxHeight: "100%", overflowY: "auto", display: "flex", justifyContent: "space-between", gap: 3 }}
             >
-                {/* <Card
-                    sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 1,
-                        width: "50%",
-                    }}
-                    variant="outlined"
-                >
-                    <CardHeader title={row.gipId} sx={{ backgroundColor: "#55C386" }} />
-                    <CardContent>
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexDirection: "row",
-                                width: "100%",
-                                justifyContent: "space-between",
-                                marginBottom: 1,
-                            }}
-                        >
-                            <Typography sx={{ fontSize: "1.125rem" }}>Full Name</Typography>
-                            <Typography sx={{ fontSize: "1.125rem", fontWeight: "bold" }}>
-                                {row.name.toUpperCase()}
-                            </Typography>
-                        </Box>
-
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexDirection: "row",
-                                width: "100%",
-                                justifyContent: "space-between",
-                            }}
-                        >
-                            <Typography>Birthdate</Typography>
-                            <Typography sx={{ fontWeight: "bold" }}>{formatDate(row.birthDate)}</Typography>
-                        </Box>
-
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexDirection: "row",
-                                width: "100%",
-                                justifyContent: "space-between",
-                            }}
-                        >
-                            <Typography>Start Date</Typography>
-                            <Typography sx={{ fontWeight: "bold" }}>{formatDate(row.startDate)}</Typography>
-                        </Box>
-
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexDirection: "row",
-                                width: "100%",
-                                justifyContent: "space-between",
-                            }}
-                        >
-                            <Typography>End Date</Typography>
-                            <Typography sx={{ fontWeight: "bold" }}>{formatDate(row.endDate)}</Typography>
-                        </Box>
-
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexDirection: "row",
-                                width: "100%",
-                                justifyContent: "space-between",
-                            }}
-                        >
-                            <Typography>Duration</Typography>
-                            <Typography sx={{ fontWeight: "bold" }}>{durationTop}</Typography>
-                        </Box>
-
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexDirection: "row",
-                                width: "100%",
-                                justifyContent: "space-between",
-                            }}
-                        >
-                            <Typography>LGU</Typography>
-                            <Typography sx={{ fontWeight: "bold" }}>{row.lgu}</Typography>
-                        </Box>
-                    </CardContent>
-                </Card>
-
-                <Card
-                    sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 1,
-                        width: "50%",
-                    }}
-                    variant="outlined"
-                >
-                    <CardHeader title="GIP EXPERIENCES" sx={{ backgroundColor: "#55C386" }} />
-                    <CardContent
-                        sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            width: "100%",
-                            justifyContent: "space-between",
-                            marginBottom: 1,
-                        }}
-                    >
-                        <Box>
-                            <Typography variant="subtitle1" fontWeight="bold"></Typography>
-                            <GIPExperience name={row.name} excludeId={row.idNumber} />
-                        </Box>
-
-                        <Box>
-                            <Typography variant="subtitle1" fontWeight="bold">
-                                Total GIP Experience:
-                            </Typography>
-                            <Typography>
-                                <strong>{totalExperience}</strong>
-                            </Typography>
-                        </Box>
-                    </CardContent>
-                </Card> */}
-                {/* <iframe src="/GIPEmployeeForm.pdf" width="100%" height="100%" style={{ border: "none", height:"100dvh" }} /> */}
                 <GIPInfoPDFPreview
                     data={{
                         fullName: formatValue(row.name),

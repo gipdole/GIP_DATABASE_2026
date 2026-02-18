@@ -1,0 +1,36 @@
+export const rows = [
+    { id: 1, gipId: "GIP-001", name: "John Doe", dateHired: "2020-01-01", dateEnded: "2021-01-01" },
+    { id: 2, gipId: "GIP-002", name: "Jane Smith", dateHired: "2019-05-15", dateEnded: "2020-12-31" },
+    { id: 3, gipId: "GIP-003", name: "Michael Johnson", dateHired: "2021-03-10", dateEnded: "2022-02-28" },
+];
+
+export const columns = [
+    { field: "id", headerName: "ID" },
+    { field: "actions", headerName: "Actions" },
+    { field: "gipId", headerName: "GIP ID" },
+    { field: "name", headerName: "Full Name" },
+    { field: "address", headerName: "Address" },
+    { field: "birthDate", headerName: "Date of Birth" },
+    { field: "age", headerName: "Age" },
+    { field: "gender", headerName: "Gender" },
+    { field: "contactNumber", headerName: "Contact Number" },
+    { field: "email", headerName: "Email" },
+    { field: "educationalAttainment", headerName: "Educational Attainment" },
+    { field: "degreeCourse", headerName: "Degree/ Course/ Track" },
+    { field: "school", headerName: "School" },
+    { field: "workExperience", headerName: "Work Experience" },
+    { field: "workPosition", headerName: "Work Position" },
+    { field: "workPeriod", headerName: "Work Period" },
+    { field: "disadvantagedGroup", headerName: "Disadvantaged Group" },
+    { field: "documentsSubmitted", headerName: "Documents Submitted" },
+    { field: "validId", headerName: "Valid ID" },
+    { field: "dateIssued", headerName: "Date Issued" },
+    { field: "lgu", headerName: "LGU" },
+    { field: "placeOfAssignment", headerName: "Place of Assignment" },
+    { field: "adl", headerName: "ADL" },
+    { field: "LBP", headerName: "LBP" },
+
+    { field: "dateHired", headerName: "Date Hired" },
+    { field: "dateEnded", headerName: "Date Ended" },
+    { field: "generateContract", headerName: "Generate Contract" },
+];
