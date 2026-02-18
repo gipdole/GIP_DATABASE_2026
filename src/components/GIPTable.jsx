@@ -23,7 +23,10 @@ export function ActionsCell({ id }) {
 export function GIPTable() {
     const [rows, setRows] = React.useState(initialRows);
     const [actionRowId, setActionRowId] = React.useState(null);
-    const [rowSelectionModel, setRowSelectionModel] = React.useState(new Set());
+    const [rowSelectionModel, setRowSelectionModel] = React.useState({
+        type: 'include',
+        ids: new Set(),
+    });
 
 
     const deleteActiveRow = React.useCallback(
@@ -41,8 +44,8 @@ export function GIPTable() {
     }, [actionRowId, deleteActiveRow, handleCloseDialog]);
 
     const handleDeleteSelected = React.useCallback(() => {
-        setRows((prevRows) => prevRows.filter((row) => !rowSelectionModel.includes(row.id)));
-        setRowSelectionModel(new Set());
+        setRows((prevRows) => prevRows.filter((row) => !rowSelectionModel.ids.has(row.id)));
+        setRowSelectionModel({ type: 'include', ids: new Set() });
     }, [rowSelectionModel]);
 
     return (
@@ -55,9 +58,9 @@ export function GIPTable() {
                     checkboxSelection
                     disableSelectionOnClick
                     rowSelectionModel={rowSelectionModel}
-                    onRowSelectionModelChange={setRowSelectionModel}
+                    onRowSelectionModelChange={(newSelectionModel) => setRowSelectionModel(newSelectionModel)}
                 />
-                {rowSelectionModel.size > 0 && (
+                {rowSelectionModel.ids.size > 0 && (
                     <Button
                         variant="contained"
                         color="error"
@@ -65,7 +68,7 @@ export function GIPTable() {
                         onClick={handleDeleteSelected}
                         sx={{ mb: 1 }}
                     >
-                        Delete Selected ({rowSelectionModel.size})
+                        Delete Selected ({rowSelectionModel.ids.size})
                     </Button>
                 )}
             </ActionHandlerContext.Provider>

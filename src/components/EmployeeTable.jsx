@@ -205,8 +205,8 @@ const EmployeeTable = () => {
                     <CircularProgress size={24} />
                 </Box>
             ) : (
-                // <MaterialReactTable table={table} />
-                <GIPTable />
+                <MaterialReactTable table={table} />
+                // <GIPTable />
             )}
 
             <ViewEmployeeModal open={!!viewRow} onClose={() => setViewRow(null)} row={viewRow} allRows={employees} />
