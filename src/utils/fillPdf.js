@@ -1,6 +1,6 @@
 import { border, borderColor, fontSize } from "@mui/system";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
-import { employee_info } from "./gip_view_employee_pdf.js";
+import { employee_info } from "../constants/gip_view_employee_pdf.js";
 /**
  * Helper to draw wrapped text in a pseudo text box.
  */

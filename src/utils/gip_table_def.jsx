@@ -1,12 +1,17 @@
+import { ActionsCell } from "../components/GIPTable";
+
 export const rows = [
-    { id: 1, gipId: "GIP-001", name: "John Doe", dateHired: "2020-01-01", dateEnded: "2021-01-01" },
-    { id: 2, gipId: "GIP-002", name: "Jane Smith", dateHired: "2019-05-15", dateEnded: "2020-12-31" },
-    { id: 3, gipId: "GIP-003", name: "Michael Johnson", dateHired: "2021-03-10", dateEnded: "2022-02-28" },
+    { id: 1, actions: null, gipId: "GIP-001", name: "John Doe", dateHired: "2020-01-01", dateEnded: "2021-01-01" },
+    { id: 2, actions: null, gipId: "GIP-002", name: "Jane Smith", dateHired: "2019-05-15", dateEnded: "2020-12-31" },
+    { id: 3, actions: null, gipId: "GIP-003", name: "Michael Johnson", dateHired: "2021-03-10", dateEnded: "2022-02-28" },
 ];
 
 export const columns = [
-    { field: "id", headerName: "ID" },
-    { field: "actions", headerName: "Actions" },
+    {
+        field: "actions", 
+        type: "actions", 
+        renderCell: (params) => <ActionsCell key="delete" {...params} />,
+    },
     { field: "gipId", headerName: "GIP ID" },
     { field: "name", headerName: "Full Name" },
     { field: "address", headerName: "Address" },
@@ -27,9 +32,8 @@ export const columns = [
     { field: "dateIssued", headerName: "Date Issued" },
     { field: "lgu", headerName: "LGU" },
     { field: "placeOfAssignment", headerName: "Place of Assignment" },
-    { field: "adl", headerName: "ADL" },
-    { field: "LBP", headerName: "LBP" },
-
+    { field: "adl", headerName: "ADL No." },
+    { field: "lbp", headerName: "LBP Account No." },
     { field: "dateHired", headerName: "Date Hired" },
     { field: "dateEnded", headerName: "Date Ended" },
     { field: "generateContract", headerName: "Generate Contract" },

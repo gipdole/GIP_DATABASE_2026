@@ -9,7 +9,7 @@ import EmployeeFormModal from "./EmployeeFormModal";
 import ViewEmployeeModal from "./ViewEmployeeModal";
 
 import { exportTableToExcel } from "../utils/excel";
-import GIPTable from "./GIPTable";
+import { GIPTable } from "./GIPTable";
 
 const lguPriority = [
     "baguio city",
