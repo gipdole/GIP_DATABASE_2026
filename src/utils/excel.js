@@ -44,9 +44,17 @@ const EXPORT_SCHEMA = [
   { key: "collegeYearFrom", label: "College Year From" },
   { key: "collegeYearTo", label: "College Year To" },
 
-  { key: "workCompany", label: "Previous Company" },
-  { key: "workPosition", label: "Previous Position" },
-  { key: "workPeriod", label: "Work Period" },
+  { key: "workCompany1", label: "Previous Company 1" },
+  { key: "workPosition1", label: "Previous Position 1" },
+  { key: "workPeriod1", label: "Work Period 1" },
+
+  { key: "workCompany2", label: "Previous Company 2" },
+  { key: "workPosition2", label: "Previous Position 2" },
+  { key: "workPeriod2", label: "Work Period 2" },
+
+  { key: "workCompany3", label: "Previous Company 3" },
+  { key: "workPosition3", label: "Previous Position 3" },
+  { key: "workPeriod3", label: "Work Period 3" },
 
   { key: "disadvantageGroup", label: "Disadvantaged Group" },
   { key: "documentsSubmitted", label: "Documents Submitted" },

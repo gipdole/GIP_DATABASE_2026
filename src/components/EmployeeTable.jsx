@@ -88,7 +88,7 @@ const EmployeeTable = () => {
     getAllColumns({ onView: handleView, onEdit: handleEdit, onDelete: handleDelete }),
     [handleView, handleEdit, handleDelete]
   );
-
+  
   const table = useMaterialReactTable({
     columns,
     data: employees,

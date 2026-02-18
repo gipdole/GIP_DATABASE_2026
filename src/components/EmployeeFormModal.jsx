@@ -321,14 +321,7 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
                     <TextField fullWidth label="College Degree / Course" name="collegeDegree" value={form.collegeDegree} onChange={handleChange} />
                   </Stack>
                 </Grid>
-                <Grid item xs={12} size={3}>
-                  <Stack spacing={2}>
-                    <TextField fullWidth label="Primary School" name="primarySchool" value={form.primarySchool} onChange={handleChange} />
-                    <TextField fullWidth label="Junior High School" name="secondarySchool" value={form.secondarySchool} onChange={handleChange} />
-                    <TextField fullWidth label="Senior High School" name="seniorHighSchool" value={form.seniorHighSchool} onChange={handleChange} />
-                    <TextField fullWidth label="College School" name="collegeSchool" value={form.collegeSchool} onChange={handleChange} />
-                  </Stack>
-                </Grid>
+                
                 <Grid item xs={12} size={3}>
                   <Stack spacing={2}>
                     <TextField fullWidth label="Year From" name="primaryYearFrom" value={form.primaryYearFrom} onChange={handleChange} />
@@ -343,6 +336,14 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
                     <TextField fullWidth label="Year To" name="secondaryYearTo" value={form.secondaryYearTo} onChange={handleChange} />
                     <TextField fullWidth label="Year To" name="seniorHighYearTo" value={form.seniorHighYearTo} onChange={handleChange} />
                     <TextField fullWidth label="Year To" name="collegeYearTo" value={form.collegeYearTo} onChange={handleChange} />
+                  </Stack>
+                </Grid>
+                <Grid item xs={12} size={3}>
+                  <Stack spacing={2}>
+                    <TextField fullWidth label="Primary School" name="primarySchool" value={form.primarySchool} onChange={handleChange} />
+                    <TextField fullWidth label="Junior High School" name="secondarySchool" value={form.secondarySchool} onChange={handleChange} />
+                    <TextField fullWidth label="Senior High School" name="seniorHighSchool" value={form.seniorHighSchool} onChange={handleChange} />
+                    <TextField fullWidth label="College School" name="collegeSchool" value={form.collegeSchool} onChange={handleChange} />
                   </Stack>
                 </Grid>
               </Grid>
