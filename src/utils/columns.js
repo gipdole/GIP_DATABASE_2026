@@ -86,6 +86,14 @@ export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete =
             },
         },
         {
+            accessorKey: "gipId",
+            header: "GIP ID",
+            size: 120,
+            enableColumnPinning: true,
+            muiTableHeadCellProps: { sx: headerSx },
+            Cell: ({ row }) => row.original.gipId?.toUpperCase() || "N/A",
+        },
+        {
             accessorKey: "name",
             header: "Full Name",
             size: 180,
@@ -93,14 +101,6 @@ export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete =
             muiTableHeadCellProps: { sx: headerSx },
             sortingFn: (rowA, rowB) => compareStrings(rowA.original.name, rowB.original.name),
             Cell: ({ row }) => row.original.name?.toUpperCase() || "N/A",
-        },
-        {
-            accessorKey: "gipId",
-            header: "GIP ID",
-            size: 120,
-            enableColumnPinning: true,
-            muiTableHeadCellProps: { sx: headerSx },
-            Cell: ({ row }) => row.original.gipId?.toUpperCase() || "N/A",
         },
         {
             accessorKey: "startDate",

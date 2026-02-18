@@ -9,6 +9,7 @@ import EmployeeFormModal from "./EmployeeFormModal";
 import ViewEmployeeModal from "./ViewEmployeeModal";
 
 import { exportTableToExcel } from "../utils/excel";
+import GIPTable from "./GIPTable";
 
 const lguPriority = [
     "baguio city",
@@ -204,7 +205,8 @@ const EmployeeTable = () => {
                     <CircularProgress size={24} />
                 </Box>
             ) : (
-                <MaterialReactTable table={table} />
+                // <MaterialReactTable table={table} />
+                <GIPTable />
             )}
 
             <ViewEmployeeModal open={!!viewRow} onClose={() => setViewRow(null)} row={viewRow} allRows={employees} />
