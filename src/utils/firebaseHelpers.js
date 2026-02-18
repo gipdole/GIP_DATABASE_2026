@@ -88,6 +88,7 @@ const mapExcelToDatabaseFields = (excelRow) => {
     'Valid ID Issued At': 'validIdIssued',
     'Place of Assignment': 'assignmentPlace',
     'LGU': 'lgu',
+    'Age': 'age',
     'Place of Birth': 'placeOfBirth',
     'Address': 'address',
     'Contact Number': 'contactNumber',
@@ -119,8 +120,19 @@ const mapExcelToDatabaseFields = (excelRow) => {
     'Previous Company 3': 'workCompany3',
     'Previous Position 3': 'workPosition3',
     'Work Period 3': 'workPeriod3',
-    'Disadvantaged Group': 'disadvantageGroup',
-    'Documents Submitted': 'documentsSubmitted',
+    'PWD': 'pwd',
+    'IP': 'iP',
+    'Victim of Armed Conflict': 'victimOfArmedConflict',
+    'Rebel Returnee': 'rebelReturnee',
+    '4Ps Beneficiary': 'fourP',
+    'Others (DG)': 'othersDG',
+    'Birth Certificate': 'birthCertificate',
+    'Transcript of Records': 'transcriptOfRecords',
+    'Diploma': 'diploma',
+    'Form 137/138': 'form137138',
+    'Application Letter': 'applicationLetter',
+    'Barangay Certificate': 'barangayCertificate',
+    'Certification From School': 'certificationFromSchool',
     'ADL No.': 'adlNo',
     'LBP Account No.': 'lbpAccount',
     'Emergency Contact Name': 'emergencyName',
@@ -128,7 +140,6 @@ const mapExcelToDatabaseFields = (excelRow) => {
     'Emergency Contact Address': 'emergencyAddress',
     'GSIS Beneficiary Name': 'gsisName',
     'GSIS Relationship': 'gsisRelationship',
-    'GPAI Link': 'gpaiLink',
     'Employment Status': 'employmentStatus',
     'Remarks': 'remarks',
   };
@@ -169,7 +180,7 @@ export const uploadEmployeesFromExcel = async (file, onSuccess) => {
       const acceptDuplicate = confirm(
         `Duplicate found\nDo you want to accept this duplicate?`
       );
-      
+
       if (!acceptDuplicate) {
         skipped++;
         continue;
@@ -221,7 +232,7 @@ export const exportSelectedEmployeesToExcel = (selectedRows = []) => {
 export const importFromExcel = async (file) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    
+
     reader.onload = (event) => {
       try {
         const data = new Uint8Array(event.target.result);
@@ -233,11 +244,11 @@ export const importFromExcel = async (file) => {
         reject(error);
       }
     };
-    
+
     reader.onerror = () => {
       reject(new Error('Failed to read file'));
     };
-    
+
     reader.readAsArrayBuffer(file);
   });
 };

@@ -13,7 +13,7 @@ const EXPORT_SCHEMA = [
   { key: "monthsWorked", label: "Months Worked" },
 
   { key: "birthDate", label: "Birth Date" },
-  { key: "placeOfBirth", label: "Place of Birth"},
+  { key: "placeOfBirth", label: "Place of Birth" },
   { key: "age", label: "Age" },
   { key: "gender", label: "Gender" },
 
@@ -26,17 +26,17 @@ const EXPORT_SCHEMA = [
 
   { key: "primaryDegree", label: "Primary Degree" },
   { key: "primarySchool", label: "Primary School" },
-  { key: "primaryYearFrom", label: "Primary Year From"},
+  { key: "primaryYearFrom", label: "Primary Year From" },
   { key: "primaryYearTo", label: "Primary Year To" },
 
   { key: "secondaryDegree", label: "Junior High Degree" },
   { key: "secondarySchool", label: "Junior High School" },
-  { key: "secondaryYearFrom", label: "Junior High Year From"},
+  { key: "secondaryYearFrom", label: "Junior High Year From" },
   { key: "secondaryYearTo", label: "Junior High Year To" },
 
   { key: "seniorHighDegree", label: "Senior High Degree" },
   { key: "seniorHighSchool", label: "Senior High School" },
-  { key: "seniorHighYearFrom", label: "Sinior High Year From"},
+  { key: "seniorHighYearFrom", label: "Sinior High Year From" },
   { key: "seniorHighYearTo", label: "Senior High Year To" },
 
   { key: "collegeDegree", label: "College Degree" },
@@ -56,8 +56,21 @@ const EXPORT_SCHEMA = [
   { key: "workPosition3", label: "Previous Position 3" },
   { key: "workPeriod3", label: "Work Period 3" },
 
-  { key: "disadvantageGroup", label: "Disadvantaged Group" },
-  { key: "documentsSubmitted", label: "Documents Submitted" },
+  { key: 'pwd', label: 'PWD' },
+  { key: 'iP', label: 'IP' },
+  { key: 'victimOfArmedConflict', label: 'Victim of Armed Conflict' },
+  { key: 'rebelReturnee', label: 'Rebel Returnee' },
+  { key: 'fourP', label: '4Ps Beneficiary' },
+  { key: 'othersDG', label: 'Others' },
+
+  { key: 'birthCertificate', label: 'Birth Certificate' },
+  { key: 'transcriptOfRecords', label: 'Transcript of Records' },
+  { key: 'diploma', label: 'Diploma' },
+  { key: 'form137138', label: 'Form 137/138' },
+  { key: 'applicationLetter', label: 'Application Letter' },
+  { key: 'barangayCertificate', label: 'Barangay Certificate' },
+  { key: 'certificationFromSchool', label: 'Certification From School' },
+
 
   { key: "validId", label: "Valid ID Type" },
   { key: "validIdIssued", label: "Valid ID Issued At" },
@@ -73,7 +86,6 @@ const EXPORT_SCHEMA = [
   { key: "gsisName", label: "GSIS Beneficiary Name" },
   { key: "gsisRelationship", label: "GSIS Relationship" },
 
-  { key: "gpaiLink", label: "GPAI Link" },
   { key: "employmentStatus", label: "Employment Status" },
   { key: "remarks", label: "Remarks" },
 ];
@@ -120,7 +132,7 @@ export const exportTableToExcel = (
     ),
   ];
 
-  
+
 
   // 3️⃣ Build Excel rows
   const sheetData = rows.map(({ original }) => {
@@ -157,7 +169,7 @@ export const exportTableToExcel = (
     return row;
   });
 
-  
+
 
   // 4️⃣ Export
   const worksheet = XLSX.utils.json_to_sheet(sheetData);
@@ -166,7 +178,7 @@ export const exportTableToExcel = (
   XLSX.utils.book_append_sheet(workbook, worksheet, "Employees");
   XLSX.writeFile(workbook, fileName);
 
-  
+
 };
 
 /**
@@ -176,7 +188,7 @@ export const exportTableToExcel = (
 export const importFromExcel = async (file) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    
+
     reader.onload = (event) => {
       try {
         const data = new Uint8Array(event.target.result);
@@ -188,11 +200,11 @@ export const importFromExcel = async (file) => {
         reject(error);
       }
     };
-    
+
     reader.onerror = () => {
       reject(new Error('Failed to read file'));
     };
-    
+
     reader.readAsArrayBuffer(file);
   });
 };

@@ -3,11 +3,11 @@ import IconButton from '@mui/material/IconButton';
 import { Box } from '@mui/material';
 import FillAndDownloadContract from '../components/FillAndDownloadContract';
 
-export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete = () => {} } = {}) => {
+export const getAllColumns = ({ onView = () => { }, onEdit = () => { }, onDelete = () => { } } = {}) => {
   const LGU_ORDER = [
     'BAGUIO CITY', 'ATOK', 'BAKUN', 'BENGUET', 'BOKOD', 'BUGUIAS',
     'ITOGON', 'KABAYAN', 'KAPANGAN', 'KIBUNGAN', 'MANKAYAN',
-    'LA TRINIDAD','SABLAN', 'TUBA', 'TUBLAY',
+    'LA TRINIDAD', 'SABLAN', 'TUBA', 'TUBLAY',
   ];
 
   const getLguOrderIndex = (lgu = '') => {
@@ -21,10 +21,10 @@ export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete =
   const formatDate = (dateStr) =>
     dateStr
       ? new Date(dateStr).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'short',
-          day: '2-digit',
-        }).toUpperCase()
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit',
+      }).toUpperCase()
       : 'N/A';
 
   const headerSx = { fontSize: '0.75rem', px: 1, py: 0.5 };
@@ -71,6 +71,16 @@ export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete =
         return rowIndex + 1;
       },
     },
+
+    {
+      accessorKey: 'gipId',
+      header: 'GIP ID',
+      size: 120,
+      enableColumnPinning: true,
+      muiTableHeadCellProps: { sx: headerSx },
+      Cell: ({ row }) => row.original.gipId?.toUpperCase() || 'N/A',
+    },
+
     {
       accessorKey: 'name',
       header: 'Full Name',
@@ -80,73 +90,9 @@ export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete =
       sortingFn: (rowA, rowB) => compareStrings(rowA.original.name, rowB.original.name),
       Cell: ({ row }) => row.original.name?.toUpperCase() || 'N/A',
     },
-    {
-      accessorKey: 'gipId',
-      header: 'GIP ID',
-      size: 120,
-      enableColumnPinning: true,
-      muiTableHeadCellProps: { sx: headerSx },
-      Cell: ({ row }) => row.original.gipId?.toUpperCase() || 'N/A',
-    },
-    {
-      accessorKey: 'startDate',
-      header: 'Start Date',
-      size: 110,
-      enableColumnFilter: false,
-      muiTableHeadCellProps: { sx: headerSx },
-      muiTableBodyCellProps: { sx: { pl: 1.5 } },
-      Cell: ({ row }) => formatDate(row.original.startDate),
-      sortingFn: (rowA, rowB) => {
-        const a = rowA.original;
-        const b = rowB.original;
-        const dateCompare = new Date(b.startDate) - new Date(a.startDate);
-        if (dateCompare !== 0) return dateCompare;
-        const lguCompare = getLguOrderIndex(a.lgu) - getLguOrderIndex(b.lgu);
-        if (lguCompare !== 0) return lguCompare;
-        return compareStrings(a.name, b.name);
-      },
-    },
-    {
-      accessorKey: 'endDate',
-      header: 'End Date',
-      size: 110,
-      enableColumnFilter: false,
-      muiTableHeadCellProps: { sx: headerSx },
-      Cell: ({ row }) => formatDate(row.original.endDate),
-    },
-    {
-      accessorKey: 'monthsWorked',
-      header: 'Duration',
-      size: 100,
-      enableSorting: false,
-      enableColumnFilter: false,
-      muiTableHeadCellProps: { sx: headerSx },
-      Cell: ({ row }) => {
-        const months = row.original.monthsWorked;
-        return months != null ? `${months} MONTH${months === 1 ? '' : 'S'}` : 'N/A';
-      },
-    },
-    {
-      accessorKey: 'lgu',
-      header: 'LGU',
-      size: 100,
-      muiTableHeadCellProps: { sx: headerSx },
-      sortingFn: (rowA, rowB) => getLguOrderIndex(rowA.original.lgu) - getLguOrderIndex(rowB.original.lgu),
-      Cell: ({ row }) => row.original.lgu?.toUpperCase() || 'N/A',
-      editVariant: 'select',
-      editSelectOptions: ['N/A', ...LGU_ORDER],
-      muiEditTextFieldProps: { select: true },
-    },
-    {
-      id: 'generateContract',
-      header: '',
-      size: 40,
-      enableColumnPinning: true,
-      enableSorting: false,
-      enableResizing: false,
-      enableColumnFilter: false,
-      Cell: ({ row }) => <FillAndDownloadContract employee={row.original} />,
-    },
+
+    { accessorKey: 'address', header: 'Address', size: 200, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.address || 'N/A' },
+
     {
       accessorKey: 'birthDate',
       header: 'Birth Date',
@@ -155,8 +101,9 @@ export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete =
       muiTableHeadCellProps: { sx: headerSx },
       Cell: ({ row }) => formatDate(row.original.birthDate),
     },
+
     {
-      id: 'age',
+      accessorKey: 'age',
       header: 'Age',
       size: 70,
       enableColumnFilter: false,
@@ -171,10 +118,17 @@ export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete =
         return `${age}`;
       },
     },
-    { accessorKey: 'address', header: 'Address', size: 200, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.address || 'N/A' },
+
     { accessorKey: 'gender', header: 'Gender', size: 80, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.gender || 'N/A' },
+
+    { accessorKey: 'civilStatus', header: 'Civil Status', size: 80, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.civilStatus || 'N/A' },
+
+    { accessorKey: 'placeOfBirth', header: 'Place of Birth', size: 80, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.placeOfBirth || 'N/A' },
+
     { accessorKey: 'contactNumber', header: 'Contact Number', size: 130, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.contactNumber || 'N/A' },
+
     { accessorKey: 'email', header: 'Email Address', size: 180, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.email || 'N/A' },
+
     { accessorKey: 'educationalAttainment', header: 'Education', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.educationalAttainment || 'N/A' },
 
     { accessorKey: 'primaryDegree', header: 'Primary Degree', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.primaryDegree || 'N/A' },
@@ -209,21 +163,155 @@ export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete =
     { accessorKey: 'workPosition3', header: 'Work Position 3', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.workPosition3 || 'N/A' },
     { accessorKey: 'workPeriod3', header: 'Work Period 3', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.workPeriod3 || 'N/A' },
 
+    {
+      accessorKey: 'pwd',
+      header: 'PWD',
+      size: 160,
+      muiTableHeadCellProps: { sx: headerSx },
+      Cell: ({ cell }) => (cell.getValue() ? 'True' : 'N/A'),
+    },
 
-    { accessorKey: 'disadvantageGroup', header: 'Disadvantage Group', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.disadvantageGroup || 'N/A' },
-    
-    { accessorKey: 'documentsSubmitted', header: 'Documents Submitted', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.documentsSubmitted || 'N/A' },
-    
+    {
+      accessorKey: 'iP',
+      header: 'IP',
+      size: 160,
+      muiTableHeadCellProps: { sx: headerSx },
+      Cell: ({ cell }) => (cell.getValue() ? 'True' : 'N/A'),
+    },
+
+    {
+      accessorKey: 'victimOfArmedConflict',
+      header: 'Victim of Armed Conflict',
+      size: 160,
+      muiTableHeadCellProps: { sx: headerSx },
+      Cell: ({ cell }) => (cell.getValue() ? 'True' : 'N/A'),
+    },
+
+    {
+      accessorKey: 'rebelReturnee',
+      header: 'Rebel Returnee',
+      size: 160,
+      muiTableHeadCellProps: { sx: headerSx },
+      Cell: ({ cell }) => (cell.getValue() ? 'True' : 'N/A'),
+    },
+
+    {
+      accessorKey: 'fourP',
+      header: '4Ps Beneficiary',
+      size: 160,
+      muiTableHeadCellProps: { sx: headerSx },
+      Cell: ({ cell }) => (cell.getValue() ? 'True' : 'N/A'),
+    },
+
+    {
+      accessorKey: 'othersDG',
+      header: 'Others',
+      size: 160,
+      muiTableHeadCellProps: { sx: headerSx },
+      Cell: ({ cell }) => (cell.getValue() ? 'True' : 'N/A'),
+    },
+
+
+    {
+      accessorKey: 'birthCertificate',
+      header: 'Birth Certificate',
+      size: 160,
+      muiTableHeadCellProps: { sx: headerSx },
+      Cell: ({ cell }) => (cell.getValue() ? 'True' : 'N/A'),
+    },
+
+    { accessorKey: 'transcriptOfRecords', header: 'Transcript of Records', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ cell }) => (cell.getValue() ? 'True' : 'N/A'),
+    },
+
+    { accessorKey: 'diploma', header: 'Diploma', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ cell }) => (cell.getValue() ? 'True' : 'N/A'),
+    },
+
+    { accessorKey: 'form137138', header: 'From 137/138', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ cell }) => (cell.getValue() ? 'True' : 'N/A'),
+    },
+
+    { accessorKey: 'applicationLetter', header: 'Application Letter', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ cell }) => (cell.getValue() ? 'True' : 'N/A'),
+    },
+
+    { accessorKey: 'barangayCertificate', header: 'Barangay Certificate', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ cell }) => (cell.getValue() ? 'True' : 'N/A'),
+    },
+
+    { accessorKey: 'certificationFromSchool', header: 'Certification From School', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ cell }) => (cell.getValue() ? 'True' : 'N/A'),
+    },
+
+    { accessorKey: 'othersD', header: 'Others', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.othersD || 'N/A' },
+
     { accessorKey: 'validId', header: 'Valid ID + No.', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.validId || 'N/A' },
-
 
     { accessorKey: 'validIdIssued', header: 'ID Issued At', size: 140, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.validIdIssued || 'N/A' },
 
-    { accessorKey: 'assignmentPlace', header: 'Assignment Place', size: 140, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.assignmentPlace || 'N/A' },
-    
-    { accessorKey: 'adlNo', header: 'ADL No.', size: 120, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.adlNo || 'N/A' },
+    {
+      accessorKey: 'lgu',
+      header: 'LGU',
+      size: 100,
+      muiTableHeadCellProps: { sx: headerSx },
+      sortingFn: (rowA, rowB) => getLguOrderIndex(rowA.original.lgu) - getLguOrderIndex(rowB.original.lgu),
+      Cell: ({ row }) => row.original.lgu?.toUpperCase() || 'N/A',
+      editVariant: 'select',
+      editSelectOptions: ['N/A', ...LGU_ORDER],
+      muiEditTextFieldProps: { select: true },
+    },
 
-    { accessorKey: 'lbpAccount', header: 'LBP Account', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.lbpAccount || 'N/A' },
+    {
+      accessorKey: 'startDate',
+      header: 'Start Date',
+      size: 110,
+      enableColumnFilter: false,
+      muiTableHeadCellProps: { sx: headerSx },
+      muiTableBodyCellProps: { sx: { pl: 1.5 } },
+      Cell: ({ row }) => formatDate(row.original.startDate),
+      sortingFn: (rowA, rowB) => {
+        const a = rowA.original;
+        const b = rowB.original;
+        const dateCompare = new Date(b.startDate) - new Date(a.startDate);
+        if (dateCompare !== 0) return dateCompare;
+        const lguCompare = getLguOrderIndex(a.lgu) - getLguOrderIndex(b.lgu);
+        if (lguCompare !== 0) return lguCompare;
+        return compareStrings(a.name, b.name);
+      },
+    },
+    {
+      accessorKey: 'endDate',
+      header: 'End Date',
+      size: 110,
+      enableColumnFilter: false,
+      muiTableHeadCellProps: { sx: headerSx },
+      Cell: ({ row }) => formatDate(row.original.endDate),
+    },
+
+    { accessorKey: 'assignmentPlace', header: 'Place of Assignment', size: 140, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.assignmentPlace || 'N/A' },
+
+    { accessorKey: 'adlNo', header: 'ADL Number', size: 140, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.adlNo || 'N/A' },
+
+    { accessorKey: 'lbpAccount', header: 'LBP Account Number', size: 140, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.lbpAccount || 'N/A' },
+
+    {
+      accessorKey: 'monthsWorked',
+      header: 'Duration',
+      size: 100,
+      enableSorting: false,
+      enableColumnFilter: false,
+      muiTableHeadCellProps: { sx: headerSx },
+      Cell: ({ row }) => {
+        const months = row.original.monthsWorked;
+        return months != null ? `${months} MONTH${months === 1 ? '' : 'S'}` : 'N/A';
+      },
+    },
+
+    {
+      id: 'generateContract',
+      header: '',
+      size: 40,
+      enableColumnPinning: true,
+      enableSorting: false,
+      enableResizing: false,
+      enableColumnFilter: false,
+      Cell: ({ row }) => <FillAndDownloadContract employee={row.original} />,
+    },
 
     { accessorKey: 'emergencyName', header: 'Emergency Name', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.emergencyName || 'N/A' },
 
@@ -234,8 +322,6 @@ export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete =
     { accessorKey: 'gsisName', header: 'GSIS Beneficiary', size: 160, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.gsisName || 'N/A' },
 
     { accessorKey: 'gsisRelationship', header: 'GSIS Relationship', size: 140, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.gsisRelationship || 'N/A' },
-
-    { accessorKey: 'gpaiLink', header: 'GPAI Link', size: 200, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.gpaiLink || 'N/A' },
 
     { accessorKey: 'employmentStatus', header: 'Employment Status', size: 140, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.employmentStatus || 'N/A' },
 
