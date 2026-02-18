@@ -11,6 +11,7 @@ import { calculateMonthsWorked } from '../utils/dateUtils';
 
 const defaultForm = {
   name: '',
+  gipId: '',
   startDate: '',
   endDate: '',
   monthsWorked: '',
@@ -166,26 +167,34 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
   }, [form.birthDate]);
 
   // Auto-generate GIP ID
-  useEffect(() => {
-    const autoGenerateGipId = async () => {
-      if (
-        form.gipId ||                // user already typed
-        !form.name?.trim() ||        // no name yet
-        !form.startDate              // no start date yet
-      ) {
-        return;
-      }
+useEffect(() => {
+  const autoGenerateGipId = async () => {
+    // ❌ Never auto-generate in edit mode
+    if (isEditMode) return;
 
-      try {
-        const generated = await generateNextGipId(form.name.trim(), form.startDate);
-        setForm((prev) => ({ ...prev, gipId: generated }));
-      } catch (err) {
-        console.error("Auto GIP ID generation failed:", err);
-      }
-    };
+    // ❌ If already has value (user typed or already generated)
+    if (form.gipId?.trim()) return;
 
-    autoGenerateGipId();
-  }, [form.gipId, form.name, form.startDate]); // ✅ added form.gipId
+    // ❌ If missing required data
+    if (!form.name?.trim() || !form.startDate) return;
+
+    try {
+      const generated = await generateNextGipId(
+        form.name.trim(),
+        form.startDate
+      );
+
+      setForm((prev) => ({
+        ...prev,
+        gipId: generated,
+      }));
+    } catch (err) {
+      console.error("Auto GIP ID generation failed:", err);
+    }
+  };
+
+  autoGenerateGipId();
+}, [form.name, form.startDate, isEditMode]);
 
   // Handlers
   const handleChange = (e) => {
@@ -254,6 +263,15 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
                 </Grid>
                 <Grid item xs={12} size={4}>
                   <Stack spacing={2}>
+
+                {/* rafaellllll */}
+                <TextField
+                  fullWidth
+                  label="GIP ID"
+                  name="gipId"
+                  value={form.gipId}
+                  onChange={handleChange}
+                />
 
                     <TextField fullWidth label="Gender" name="gender" value={form.gender} onChange={handleChange} select>
                       {GENDER_OPTIONS.map((gender) => (
