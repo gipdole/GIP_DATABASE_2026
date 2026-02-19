@@ -97,6 +97,8 @@ function drawTextInFrame(page, text, frame, options = {}) {
         drawBorder = false,
         borderColor = rgb(0, 0, 0),
         borderWidth = 1,
+        autoSize = true,        // Enable auto-sizing by default
+        minFontSize = 6,        // Minimum font size when auto-sizing
     } = options;
 
     const { x, y, height, width } = frame;
@@ -118,34 +120,45 @@ function drawTextInFrame(page, text, frame, options = {}) {
     const contentHeight = height - padding * 2;
     const contentX = x + padding;
 
-    // Wrap text into lines
-    const lines = wrapText(text, font, fontSize, contentWidth);
+    // Auto-size if enabled
+    let finalFontSize = fontSize;
+    let finalLineHeight = lineHeight;
+    let lines = [];
+
+    if (autoSize) {
+        const result = autoSizeText(text, font, fontSize, contentWidth, contentHeight, minFontSize);
+        finalFontSize = result.fontSize;
+        finalLineHeight = result.lineHeight;
+        lines = result.lines;
+    } else {
+        lines = wrapText(text, font, finalFontSize, contentWidth);
+    }
 
     // Calculate total text block height
-    const totalTextHeight = lines.length * lineHeight;
+    const totalTextHeight = lines.length * finalLineHeight;
 
     // Calculate starting Y position based on vertical alignment
     let startY;
     if (verticalAlign === "top") {
-        startY = y + height - padding - fontSize; // Start from top
+        startY = y + height - padding - finalFontSize; // Start from top
     } else if (verticalAlign === "middle") {
-        startY = y + (height + totalTextHeight) / 2 - fontSize;
+        startY = y + (height + totalTextHeight) / 2 - finalFontSize;
     } else if (verticalAlign === "bottom") {
-        startY = y + totalTextHeight + padding - fontSize;
+        startY = y + totalTextHeight + padding - finalFontSize;
     }
 
     // Draw each line
     lines.forEach((line, index) => {
-        const yPosition = startY - index * lineHeight;
+        const yPosition = startY - index * finalLineHeight;
 
         // Only draw if within frame bounds
         if (yPosition >= y && yPosition <= y + height) {
-            const xPosition = alignText(line, font, fontSize, contentX, contentWidth, align);
+            const xPosition = alignText(line, font, finalFontSize, contentX, contentWidth, align);
 
             page.drawText(line, {
                 x: xPosition,
                 y: yPosition,
-                size: fontSize,
+                size: finalFontSize,
                 font: font,
                 color: color,
             });
@@ -154,6 +167,7 @@ function drawTextInFrame(page, text, frame, options = {}) {
 
     return lines.length; // Return number of lines drawn
 }
+
 
 function wrapText(text, font, fontSize, maxWidth) {
     const words = text.split(" ");
@@ -181,6 +195,43 @@ function wrapText(text, font, fontSize, maxWidth) {
 
     return lines;
 }
+
+function autoSizeText(text, font, maxFontSize, maxWidth, maxHeight, minFontSize = 6) {
+    let fontSize = maxFontSize;
+    let lineHeight = fontSize * 1.25;
+    let lines = [];
+
+    // Try decreasing font sizes until text fits
+    while (fontSize >= minFontSize) {
+        lineHeight = fontSize * 1.25;
+        lines = wrapText(text, font, fontSize, maxWidth);
+        const totalHeight = lines.length * lineHeight;
+
+        // Check if it fits
+        if (totalHeight <= maxHeight) {
+            // Also check if any individual line is too wide
+            const allLinesFit = lines.every(line => 
+                font.widthOfTextAtSize(line, fontSize) <= maxWidth
+            );
+            
+            if (allLinesFit) {
+                break; // Found a size that fits!
+            }
+        }
+
+        fontSize -= 0.5; // Decrease font size
+    }
+
+    // Ensure we don't go below minimum
+    if (fontSize < minFontSize) {
+        fontSize = minFontSize;
+        lineHeight = fontSize * 1.25;
+        lines = wrapText(text, font, fontSize, maxWidth);
+    }
+
+    return { fontSize, lineHeight, lines };
+}
+
 
 function alignText(text, font, fontSize, startX, maxWidth, align) {
     if (align === "left") {
