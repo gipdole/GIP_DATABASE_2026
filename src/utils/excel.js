@@ -8,8 +8,6 @@ import { calculateMonthsWorked } from "./dateUtils";
  */
 const EXPORT_SCHEMA = [
     { key: "name", label: "Full Name" },
-    { key: "dateHired", label: "Date Hired" },
-    { key: "dateEnded", label: "Date Ended" },
     { key: "monthsWorked", label: "Months Worked" },
 
   { key: "birthDate", label: "Birth Date" },
@@ -70,7 +68,6 @@ const EXPORT_SCHEMA = [
   { key: 'applicationLetter', label: 'Application Letter' },
   { key: 'barangayCertificate', label: 'Barangay Certificate' },
   { key: 'certificationFromSchool', label: 'Certification From School' },
-
 
     { key: "validId", label: "Valid ID Type" },
     { key: "validIdIssued", label: "Valid ID Issued At" },
@@ -155,25 +152,127 @@ export const exportTableToExcel = (table, fileName = "GIP Employees.xlsx") => {
  * Parses the Excel file and returns an array of employee objects.
  */
 export const importFromExcel = async (file) => {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
+  const toBoolean = (value) => {
+    if (value === undefined || value === null) return false;
 
-        reader.onload = (event) => {
-            try {
-                const data = new Uint8Array(event.target.result);
-                const workbook = XLSX.read(data, { type: "array" });
-                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                const rows = XLSX.utils.sheet_to_json(worksheet);
-                resolve(rows);
-            } catch (error) {
-                reject(error);
-            }
-        };
+    const text = String(value).trim().toLowerCase();
 
-        reader.onerror = () => {
-            reject(new Error("Failed to read file"));
-        };
+    if (!text) return false;
+    if (["no", "false", "0"].includes(text)) return false;
 
-        reader.readAsArrayBuffer(file);
-    });
+    return true;
+  };
+
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      try {
+        const data = new Uint8Array(event.target.result);
+        const workbook = XLSX.read(data, { type: "array" });
+        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(worksheet);
+
+        const mappedRows = rows.map((row) => ({
+          // Basic Info
+          name: row["Full Name"] || "",
+          address: row["Address"] || "",
+          birthDate: row["Birth Date"] || "",
+          age: Number(row["Age"]) || "",
+          gender: row["Gender"] || "",
+          civilStatus: row["Civil Status"] || "",
+          placeOfBirth: row["Place of Birth"] || "",
+          contactNumber: row["Contact Number"] || "",
+          email: row["Email Address"] || "",
+          educationalAttainment: row["Education"] || "",
+
+          // Education
+          primaryDegree: row["Primary Degree"] || "",
+          primarySchool: row["Primary School"] || "",
+          primaryYearFrom: row["Primary From"] || "",
+          primaryYearTo: row["Primary To"] || "",
+
+          secondaryDegree: row["Secondary Degree"] || "",
+          secondarySchool: row["Secondary School"] || "",
+          secondaryYearFrom: row["Secondary From"] || "",
+          secondaryYearTo: row["Secondary To"] || "",
+
+          seniorHighDegree: row["Senior High Degree"] || "",
+          seniorHighSchool: row["Senior High School"] || "",
+          seniorHighYearFrom: row["Senior High From"] || "",
+          seniorHighYearTo: row["Senior High To"] || "",
+
+          collegeDegree: row["College Degree"] || "",
+          collegeSchool: row["College School"] || "",
+          collegeYearFrom: row["College From"] || "",
+          collegeYearTo: row["College To"] || "",
+
+          // Work
+          workCompany1: row["Work Company 1"] || "",
+          workPosition1: row["Work Position 1"] || "",
+          workPeriod1: row["Work Period 1"] || "",
+
+          workCompany2: row["Work Company 2"] || "",
+          workPosition2: row["Work Position 2"] || "",
+          workPeriod2: row["Work Period 2"] || "",
+
+          workCompany3: row["Work Company 3"] || "",
+          workPosition3: row["Work Position 3"] || "",
+          workPeriod3: row["Work Period 3"] || "",
+
+          // Disadvantaged Group (BOOLEAN)
+          pwd: toBoolean(row["PWD"]),
+          iP: toBoolean(row["IP"]),
+          victimOfArmedConflict: toBoolean(row["Victim of Armed Conflict"]),
+          rebelReturnee: toBoolean(row["Rebel Returnee"]),
+          fourP: toBoolean(row["4Ps Beneficiary"]),
+          othersDG: toBoolean(row["Others"]),
+
+          // Documents (BOOLEAN)
+          birthCertificate: toBoolean(row["Birth Certificate"]),
+          transcriptOfRecords: toBoolean(row["Transcript of Records"]),
+          diploma: toBoolean(row["Diploma"]),
+          form137138: toBoolean(row["From 137/138"]),
+          applicationLetter: toBoolean(row["Application Letter"]),
+          barangayCertificate: toBoolean(row["Barangay Certificate"]),
+          certificationFromSchool: toBoolean(row["Certification From School"]),
+
+          // Employment Info
+          validId: row["Valid ID + No."] || "",
+          validIdIssued: row["ID Issued At"] || "",
+          lgu: row["LGU"] || "",
+          dateHired: row["Start Date"] || "",
+          dateEnded: row["End Date"] || "",
+          assignmentPlace: row["Place of Assignment"] || "",
+          adlNo: row["ADL Number"] || "",
+          monthsWorked: Number(row["Duration"]) || "",
+          lbpAccount: row["LBP Account"] || "",
+
+          // Emergency
+          emergencyName: row["Emergency Name"] || "",
+          emergencyContact: row["Emergency Contact"] || "",
+          emergencyAddress: row["Emergency Address"] || "",
+
+          // GSIS
+          gsisName: row["GSIS Beneficiary"] || "",
+          gsisRelationship: row["GSIS Relationship"] || "",
+
+          // Status
+          employmentStatus: row["Employment Status"] || "",
+          remarks: row["Remarks"] || "",
+        }));
+
+        resolve(mappedRows);
+      } catch (error) {
+        reject(error);
+      }
+    };
+
+    reader.onerror = () => {
+      reject(new Error("Failed to read file"));
+    };
+
+    reader.readAsArrayBuffer(file);
+  });
 };
+

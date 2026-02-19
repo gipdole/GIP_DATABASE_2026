@@ -327,6 +327,9 @@ export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete =
             Cell: ({ row }) => row.original.workPeriod3 || "N/A",
         },
 
+        
+
+
     {
       accessorKey: 'pwd',
       header: 'PWD',
@@ -451,8 +454,6 @@ export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete =
 
     { accessorKey: 'adlNo', header: 'ADL Number', size: 140, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.adlNo || 'N/A' },
 
-    { accessorKey: 'lbpAccount', header: 'LBP Account Number', size: 140, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.lbpAccount || 'N/A' },
-
     {
       accessorKey: 'monthsWorked',
       header: 'Duration',
@@ -516,6 +517,16 @@ export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete =
             muiTableHeadCellProps: { sx: headerSx },
             Cell: ({ row }) => row.original.gsisName || "N/A",
         },
+
+        {
+            accessorKey: "gsisRelationship",
+            header: "GSIS Relationship",
+            size: 160,
+            muiTableHeadCellProps: { sx: headerSx },
+            Cell: ({ row }) => row.original.gsisRelationship || "N/A",
+        },
+
+
 
     { accessorKey: 'employmentStatus', header: 'Employment Status', size: 140, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.employmentStatus || 'N/A' },
 

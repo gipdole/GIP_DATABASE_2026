@@ -95,6 +95,7 @@ const defaultForm = {
     applicationLetter: false,
     barangayCertificate: false,
     othersD: "",
+    
 };
 
 const LGU_OPTIONS = [
