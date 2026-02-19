@@ -180,9 +180,9 @@ const EmployeeTable = () => {
       };
 
       const handleExportSelectedExcel = () => {
-        const selected = selectedRows.map((row) => row.original);
-        if (!selected.length) return alert("No rows selected");
-        exportTableToExcel(selected);
+        // const selected = selectedRows.map((row) => row.original);
+        if (!selectedRows.length) return alert("No rows selected");
+        exportTableToExcel(table);
       };
 
       return (

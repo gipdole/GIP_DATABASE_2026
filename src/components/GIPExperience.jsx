@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { db } from "../firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
-import { Typography, Box } from "@mui/material";
+import { Typography, Box, Card, CardContent, CardHeader } from "@mui/material";
 import { parse, format, isValid } from "date-fns";
 import { calculateMonthsAndDaysWorked } from "../utils/dateUtils";
 
@@ -15,9 +15,8 @@ const formatDuration = ({ months, days }) => {
     }
 
     if (totalMonths > 0) {
-        return `${totalMonths} MONTH${totalMonths > 1 ? "S" : ""}${
-            totalDays > 0 ? ` ${totalDays} DAY${totalDays > 1 ? "S" : ""}` : ""
-        }`;
+        return `${totalMonths} MONTH${totalMonths > 1 ? "S" : ""}${totalDays > 0 ? ` ${totalDays} DAY${totalDays > 1 ? "S" : ""}` : ""
+            }`;
     } else {
         return `${totalDays} DAY${totalDays > 1 ? "S" : ""}`;
     }
@@ -83,39 +82,77 @@ const GIPExperience = ({ name, excludeId }) => {
                     { months: 0, days: 0 },
                 );
 
-                const totalDisplay = formatDuration(total);
-
                 return (
-                    <Box key={year}>
-                        <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                            {year} — <strong>{totalDisplay}</strong>
+                    <Box key={year} mb={2}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 1 }}>
+                            {year} — <strong>{formatDuration(total)}</strong>
                         </Typography>
 
-                        {entries.map((entry) => {
-                            const start = toDate(entry.startDate);
-                            const end = toDate(entry.endDate);
-                            const duration = calculateMonthsAndDaysWorked(start, end);
-                            const durationDisplay = formatDuration(duration);
+                        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                            {entries.map((entry) => {
+                                const start = toDate(entry.startDate);
+                                const end = toDate(entry.endDate);
+                                const durationDisplay = formatDuration(calculateMonthsAndDaysWorked(start, end));
 
-                            return (
-                                <Box key={entry.id} sx={{ pl: 2 }}>
-                                    <Typography variant="body2">
-                                        {start && isValid(start)
-                                            ? format(start, "MMM d, yyyy").replace(/^([a-zA-Z]+)/, (m) =>
-                                                  m.toUpperCase(),
-                                              )
-                                            : "Invalid"}{" "}
-                                        to{" "}
-                                        {end && isValid(end)
-                                            ? format(end, "MMM d, yyyy").replace(/^([a-zA-Z]+)/, (m) =>
-                                                  m.toUpperCase(),
-                                              )
-                                            : "Invalid"}{" "}
-                                        — {durationDisplay} — LGU: <strong>{entry.lgu || "N/A"}</strong>
-                                    </Typography>
-                                </Box>
-                            );
-                        })}
+                                return (
+                                    <Box key={entry.id} sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
+                                        <Card sx={{flex: 1}}>
+                                            <CardHeader sx={{
+                                                p: 3,
+                                                borderTopLeftRadius: 3,
+                                                borderTopRightRadius: 3,
+                                                background: "linear-gradient(135deg, #55C386 0%, #3FA76A 100%)",
+                                                color: "#fff",
+                                                boxShadow: "0 6px 25px rgba(85,195,134,0.35)", textAlign: 'center'
+                                            }} title='Total GIP Experience' />
+                                            <CardContent sx={{ py: 1, "&:last-child": { pb: 1 } }}>
+                                                <Typography variant="body2">
+                                                    {start && isValid(start)
+                                                        ? format(start, "MMM d, yyyy").replace(/^([a-zA-Z]+)/, (m) => m.toUpperCase())
+                                                        : "Invalid"}{" "}
+                                                    to{" "}
+                                                    {end && isValid(end)
+                                                        ? format(end, "MMM d, yyyy").replace(/^([a-zA-Z]+)/, (m) => m.toUpperCase())
+                                                        : "Invalid"}
+                                                </Typography>
+                                            </CardContent>
+                                        </Card>
+                                        <Card  sx={{flex: 1}}>
+                                            <CardHeader sx={{
+                                                p: 3,
+                                                borderTopLeftRadius: 3,
+                                                borderTopRightRadius: 3,
+                                                background: "linear-gradient(135deg, #55C386 0%, #3FA76A 100%)",
+                                                color: "#fff",
+                                                boxShadow: "0 6px 25px rgba(85,195,134,0.35)", textAlign: 'center'
+                                            }} title='Employment Duration' />
+                                            <CardContent sx={{ py: 1, "&:last-child": { pb: 1 } }}>
+                                                <CardContent sx={{ py: 1, "&:last-child": { pb: 1 } }}>
+                                                    <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                                                        {durationDisplay}
+                                                    </Typography>
+                                                </CardContent>
+                                            </CardContent>
+                                        </Card>
+                                        <Card  sx={{flex: 1}}>
+                                            <CardHeader sx={{
+                                                p: 3,
+                                                borderTopLeftRadius: 3,
+                                                borderTopRightRadius: 3,
+                                                background: "linear-gradient(135deg, #55C386 0%, #3FA76A 100%)",
+                                                color: "#fff",
+                                                boxShadow: "0 6px 25px rgba(85,195,134,0.35)", textAlign: 'center'
+                                            }} title='Employment Duration' />
+                                            <CardContent sx={{ py: 1, "&:last-child": { pb: 1 } }}>
+                                                <Typography variant="body2">
+                                                    LGU: <strong>{entry.lgu || "N/A"}</strong>
+                                                </Typography>
+                                            </CardContent>
+                                        </Card>
+                                    </Box>
+                                );
+                            })}
+                        </Box>
                     </Box>
                 );
             })}
