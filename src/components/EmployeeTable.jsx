@@ -9,7 +9,6 @@ import EmployeeFormModal from "./EmployeeFormModal";
 import ViewEmployeeModal from "./ViewEmployeeModal";
 
 import { exportTableToExcel } from "../utils/excel";
-import { GIPTable } from "./GIPTable";
 
 const lguPriority = [
     "baguio city",
@@ -115,8 +114,18 @@ const EmployeeTable = () => {
         enableColumnPinning: true,
         enableColumnResizing: true,
         renderBottomToolbar: false,
-        renderTopToolbarCustomActions: () => (
-            <Box sx={{ display: "flex", gap: 1, px: 0.5 }}>
+        renderTopToolbarCustomActions: () => {
+            const selectedRows = table.getSelectedRowModel().rows;
+            const hasSelected = selectedRows.length > 0;
+
+            const handleDeleteSelected = async () => {
+                if (!window.confirm(`Delete ${selectedRows.length} selected employee(s)?`)) return;
+                await Promise.all(selectedRows.map((row) => deleteEmployee(row.original.id)));
+                table.resetRowSelection(); // clear checkboxes
+                await fetchEmployees();
+            };
+
+            return (<Box sx={{ display: "flex", gap: 1, px: 0.5 }}>
                 <Button
                     size="small"
                     variant="contained"
@@ -157,8 +166,26 @@ const EmployeeTable = () => {
                 >
                     Export
                 </Button>
+                <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={handleDeleteSelected}
+                    disabled={!hasSelected}
+                    sx={{
+                        borderColor: "#e53935",
+                        color: "#e53935",
+                        "&:hover": {
+                            borderColor: "#b71c1c",
+                            backgroundColor: "rgba(229,57,53,0.08)",
+                        },
+                        "&:disabled": { borderColor: "#ccc", color: "#ccc" },
+                    }}
+                >
+                    Delete Selected ({selectedRows.length})
+                </Button>
             </Box>
-        ),
+            );
+        },
         customSortingFns: { lguSort: lguSortFn, dateAsc: dateSortFn },
         initialState: {
             density: "compact",
