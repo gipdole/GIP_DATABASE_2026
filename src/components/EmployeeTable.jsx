@@ -104,6 +104,11 @@ const EmployeeTable = () => {
     layoutMode: "grid-no-grow",
 
     enablePagination: true,
+    muiPaginationProps: {
+      rowsPerPageOptions: [25, 50, 100, 200],
+      showFirstButton: true,
+      showLastButton: true,
+    },
     enableSorting: true,
     enableStickyHeader: true,
     enableRowSelection: true,
@@ -112,6 +117,7 @@ const EmployeeTable = () => {
 
 
     initialState: {
+      pagination: { pageSize: 50, pageIndex: 0 },
       density: "compact",
       columnPinning: {
         left: ["mrt-row-select", "actions", "rowNumber", "name", "gipId"],

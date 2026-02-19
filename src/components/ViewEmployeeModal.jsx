@@ -10,6 +10,10 @@ import {
     Box,
     Tabs,
     Tab,
+    Card,
+    CardHeader,
+    CardContent,
+    Grid
 } from "@mui/material";
 import { isValid, parseISO, format, parse } from "date-fns";
 
@@ -198,17 +202,107 @@ const ViewEmployeeModal = ({ open, onClose, row, allRows }) => {
                 </CustomTabPanel>
                 {/* Tab 1: Experience Summary — customize freely */}
                 <CustomTabPanel value={tab} index={1}>
-                    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                        <Box>
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+
+                        {/* Experience Card */}
+                        <Box
+                            sx={{
+                                p: 3,
+                                borderRadius: 3,
+                                backgroundColor: "#ffffff",
+                                boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
+                                borderLeft: "6px solid #55C386",
+                            }}
+                        >
+                            <Box sx={{ fontSize: "1.1rem", fontWeight: 600, mb: 2 }}>
+                                Experience Summary
+                            </Box>
+
                             <GIPExperience name={row.name} excludeId={row.idNumber} />
-                            <Box sx={{ mt: 0.5, fontSize: "1.1rem" }}>{durationTop}</Box>
                         </Box>
-                        <Box>
-                            <strong>Total GIP Experience</strong>
-                            <Box sx={{ mt: 0.5, fontSize: "1.1rem" }}>{totalExperience}</Box>
+
+                        <Card>
+                            <CardHeader
+                                sx={{ fontWeight: 'bold', textAlign: 'center' }}
+                                title='Experience Summary'
+                            />
+                            <CardContent>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12} size={4}>
+                                        <Card>
+                                            <CardHeader sx={{
+                                                p: 3,
+                                                borderRadius: 3,
+                                                background: "linear-gradient(135deg, #55C386 0%, #3FA76A 100%)",
+                                                color: "#fff",
+                                                boxShadow: "0 6px 25px rgba(85,195,134,0.35)", textAlign: 'center'
+                                            }} title='Total GIP Experience' />
+                                            <CardContent>
+
+                                            </CardContent>
+                                        </Card>
+                                    </Grid>
+                                    <Grid item xs={12} size={4}>
+                                        <Card>
+                                            <CardHeader sx={{
+                                                p: 3,
+                                                borderRadius: 3,
+                                                background: "linear-gradient(135deg, #55C386 0%, #3FA76A 100%)",
+                                                color: "#fff",
+                                                boxShadow: "0 6px 25px rgba(85,195,134,0.35)", textAlign: 'center'
+                                            }} title='Employment Duration' />
+                                            <CardContent>
+
+                                            </CardContent>
+                                        </Card>
+                                    </Grid>
+                                    <Grid item xs={12} size={4}>
+                                        <Card>
+                                            <CardHeader sx={{
+                                                p: 3,
+                                                borderRadius: 3,
+                                                background: "linear-gradient(135deg, #55C386 0%, #3FA76A 100%)",
+                                                color: "#fff",
+                                                boxShadow: "0 6px 25px rgba(85,195,134,0.35)", textAlign: 'center'
+                                            }} title='Local Government Unit' />
+                                            <CardContent>
+
+                                            </CardContent>
+                                        </Card>
+                                    </Grid>
+                                </Grid>
+                            </CardContent>
+                        </Card>
+
+                        {/* Total Experience Highlight */}
+                        <Box
+                            sx={{
+                                p: 3,
+                                borderRadius: 3,
+                                background: "linear-gradient(135deg, #55C386 0%, #3FA76A 100%)",
+                                color: "#fff",
+                                boxShadow: "0 6px 25px rgba(85,195,134,0.35)",
+                            }}
+                        >
+                            <Box sx={{ fontSize: "1.25rem", opacity: 0.9 }}>
+                                Total GIP Experience
+                            </Box>
+
+                            <Box
+                                sx={{
+                                    fontSize: "1.8rem",
+                                    fontWeight: 700,
+                                    mt: 1,
+                                    letterSpacing: 1,
+                                }}
+                            >
+                                {totalExperience}
+                            </Box>
                         </Box>
+
                     </Box>
                 </CustomTabPanel>
+
             </DialogContent>
 
             <DialogActions>
