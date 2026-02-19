@@ -94,65 +94,64 @@ const GIPExperience = ({ name, excludeId }) => {
                             const duration = calculateMonthsAndDaysWorked(start, end);
                             const durationDisplay = formatDuration(duration);
 
-                                return (
-                                    <Box key={entry.id} sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
-                                        <Card sx={{flex: 1}}>
-                                            <CardHeader sx={{
-                                                p: 3,
-                                                borderTopLeftRadius: 3,
-                                                borderTopRightRadius: 3,
-                                                background: "linear-gradient(135deg, #55C386 0%, #3FA76A 100%)",
-                                                color: "#fff",
-                                                boxShadow: "0 6px 25px rgba(85,195,134,0.35)", textAlign: 'center'
-                                            }} title='Total GIP Experience' />
+                            return (
+                                <Box key={entry.id} sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
+                                    <Card sx={{ flex: 1 }}>
+                                        <CardHeader sx={{
+                                            p: 3,
+                                            borderTopLeftRadius: 3,
+                                            borderTopRightRadius: 3,
+                                            background: "linear-gradient(135deg, #55C386 0%, #3FA76A 100%)",
+                                            color: "#fff",
+                                            boxShadow: "0 6px 25px rgba(85,195,134,0.35)", textAlign: 'center'
+                                        }} title='Total GIP Experience' />
+                                        <CardContent sx={{ py: 1, "&:last-child": { pb: 1 } }}>
+                                            <Typography variant="body2">
+                                                {start && isValid(start)
+                                                    ? format(start, "MMM d, yyyy").replace(/^([a-zA-Z]+)/, (m) => m.toUpperCase())
+                                                    : "Invalid"}{" "}
+                                                to{" "}
+                                                {end && isValid(end)
+                                                    ? format(end, "MMM d, yyyy").replace(/^([a-zA-Z]+)/, (m) => m.toUpperCase())
+                                                    : "Invalid"}
+                                            </Typography>
+                                        </CardContent>
+                                    </Card>
+                                    <Card sx={{ flex: 1 }}>
+                                        <CardHeader sx={{
+                                            p: 3,
+                                            borderTopLeftRadius: 3,
+                                            borderTopRightRadius: 3,
+                                            background: "linear-gradient(135deg, #55C386 0%, #3FA76A 100%)",
+                                            color: "#fff",
+                                            boxShadow: "0 6px 25px rgba(85,195,134,0.35)", textAlign: 'center'
+                                        }} title='Employment Duration' />
+                                        <CardContent sx={{ py: 1, "&:last-child": { pb: 1 } }}>
                                             <CardContent sx={{ py: 1, "&:last-child": { pb: 1 } }}>
-                                                <Typography variant="body2">
-                                                    {start && isValid(start)
-                                                        ? format(start, "MMM d, yyyy").replace(/^([a-zA-Z]+)/, (m) => m.toUpperCase())
-                                                        : "Invalid"}{" "}
-                                                    to{" "}
-                                                    {end && isValid(end)
-                                                        ? format(end, "MMM d, yyyy").replace(/^([a-zA-Z]+)/, (m) => m.toUpperCase())
-                                                        : "Invalid"}
+                                                <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                                                    {durationDisplay}
                                                 </Typography>
                                             </CardContent>
-                                        </Card>
-                                        <Card  sx={{flex: 1}}>
-                                            <CardHeader sx={{
-                                                p: 3,
-                                                borderTopLeftRadius: 3,
-                                                borderTopRightRadius: 3,
-                                                background: "linear-gradient(135deg, #55C386 0%, #3FA76A 100%)",
-                                                color: "#fff",
-                                                boxShadow: "0 6px 25px rgba(85,195,134,0.35)", textAlign: 'center'
-                                            }} title='Employment Duration' />
-                                            <CardContent sx={{ py: 1, "&:last-child": { pb: 1 } }}>
-                                                <CardContent sx={{ py: 1, "&:last-child": { pb: 1 } }}>
-                                                    <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                                                        {durationDisplay}
-                                                    </Typography>
-                                                </CardContent>
-                                            </CardContent>
-                                        </Card>
-                                        <Card  sx={{flex: 1}}>
-                                            <CardHeader sx={{
-                                                p: 3,
-                                                borderTopLeftRadius: 3,
-                                                borderTopRightRadius: 3,
-                                                background: "linear-gradient(135deg, #55C386 0%, #3FA76A 100%)",
-                                                color: "#fff",
-                                                boxShadow: "0 6px 25px rgba(85,195,134,0.35)", textAlign: 'center'
-                                            }} title='Employment Duration' />
-                                            <CardContent sx={{ py: 1, "&:last-child": { pb: 1 } }}>
-                                                <Typography variant="body2">
-                                                    LGU: <strong>{entry.lgu || "N/A"}</strong>
-                                                </Typography>
-                                            </CardContent>
-                                        </Card>
-                                    </Box>
-                                );
-                            })}
-                        </Box>
+                                        </CardContent>
+                                    </Card>
+                                    <Card sx={{ flex: 1 }}>
+                                        <CardHeader sx={{
+                                            p: 3,
+                                            borderTopLeftRadius: 3,
+                                            borderTopRightRadius: 3,
+                                            background: "linear-gradient(135deg, #55C386 0%, #3FA76A 100%)",
+                                            color: "#fff",
+                                            boxShadow: "0 6px 25px rgba(85,195,134,0.35)", textAlign: 'center'
+                                        }} title='Employment Duration' />
+                                        <CardContent sx={{ py: 1, "&:last-child": { pb: 1 } }}>
+                                            <Typography variant="body2">
+                                                LGU: <strong>{entry.lgu || "N/A"}</strong>
+                                            </Typography>
+                                        </CardContent>
+                                    </Card>
+                                </Box>
+                            );
+                        })}
                     </Box>
                 );
             })}
