@@ -7,17 +7,17 @@ import {
     DialogActions,
     // Typography,
     Button,
-    // Box,
-    // Card,
-    // CardContent,
-    // CardHeader,
+    Box,
+    Tabs,
+    Tab,
 } from "@mui/material";
-import { isValid, parseISO, format } from "date-fns";
+import { isValid, parseISO, format, parse } from "date-fns";
 
 // import GIPExperience from "./GIPExperience";
 import { calculateMonthsAndDaysWorked, formatDuration } from "../utils/dateUtils";
 import { fillGIPInfoPDF } from "../utils/fillPdf";
 import gipEmployeeForm from "../assets/GIPEmployeeForm.pdf";
+import GIPExperience from "./GIPExperience";
 
 function GIPInfoPDFPreview({ data }) {
     const [pdfUrl, setPdfUrl] = useState(null);
@@ -53,32 +53,48 @@ function GIPInfoPDFPreview({ data }) {
     );
 }
 
+function CustomTabPanel({ children, value, index }) {
+    return (
+        <div role="tabpanel" hidden={value !== index}>
+            {value === index && <Box sx={{ p: 2 }}>{children}</Box>}
+        </div>
+    );
+}
+
 const ViewEmployeeModal = ({ open, onClose, row, allRows }) => {
+    const [tab, setTab] = useState(0);
+
+    console.log("Before", row)
+    const toDate = (dateStr) => {
+        if (!dateStr) return null;
+        const parsed = parse(dateStr, "MMMM d, yyyy", new Date());
+        if (isValid(parsed)) return parsed;
+        // fallback for "Jan 04, 2002" format (MMM dd, yyyy)
+        const parsed2 = parse(dateStr, "MMM dd, yyyy", new Date());
+        return isValid(parsed2) ? parsed2 : null;
+    };
+
+    const durationTop = useMemo(() => {
+        if (!row) return "";
+        return formatDuration(calculateMonthsAndDaysWorked(toDate(row.startDate), toDate(row.endDate)));
+    }, [row?.startDate, row?.endDate]);
+
+    const totalExperience = useMemo(() => {
+        if (!row) return "";
+        const entries = allRows.filter((r) => r.name?.toLowerCase().trim() === row.name?.toLowerCase().trim());
+        const total = entries.reduce(
+            (acc, entry) => {
+                const { months, days } = calculateMonthsAndDaysWorked(toDate(entry.startDate), toDate(entry.endDate));
+                acc.months += months;
+                acc.days += days;
+                return acc;
+            },
+            { months: 0, days: 0 },
+        );
+        return formatDuration(total);
+    }, [allRows, row?.name]);
+
     if (!row) return null;
-
-    console.log(row);
-
-    // Top Duration field
-    // const durationTop = useMemo(() => {
-    //     return formatDuration(calculateMonthsAndDaysWorked(row.dateHired, row.dateEnded));
-    // }, [row.dateHired, row.dateEnded]);
-
-    // // Total GIP experience across all entries
-    // const totalExperience = useMemo(() => {
-    //     const entries = allRows.filter((r) => r.name?.toLowerCase().trim() === row.name?.toLowerCase().trim());
-
-    //     const total = entries.reduce(
-    //         (acc, entry) => {
-    //             const { months, days } = calculateMonthsAndDaysWorked(entry.dateHired, entry.dateEnded);
-    //             acc.months += months;
-    //             acc.days += days;
-    //             return acc;
-    //         },
-    //         { months: 0, days: 0 },
-    //     );
-
-    //     return formatDuration(total);
-    // }, [allRows, row.name]);
 
     const formatValue = (value, fallback = "N/A") =>
         value === undefined || value === null || value === "" ? fallback : value;
@@ -100,7 +116,6 @@ const ViewEmployeeModal = ({ open, onClose, row, allRows }) => {
 
     //     return formatValue(value);
     // };
-
     return (
         <Dialog
             open={open}
@@ -114,65 +129,86 @@ const ViewEmployeeModal = ({ open, onClose, row, allRows }) => {
                 EMPLOYEE INFORMATION
             </DialogTitle>
 
-            <DialogContent
-                dividers
-                id="view-employee-description"
-                sx={{ maxHeight: "100%", overflowY: "auto", display: "flex", justifyContent: "space-between", gap: 3 }}
-            >
-                <GIPInfoPDFPreview
-                    data={{
-                        fullName: formatValue(row.name),
-                        address: formatValue(row.address),
-                        contactNumber: formatValue(row.contactNumber),
-                        email: formatValue(row.email),
-                        birthDate: formatValue(formatDate(row.birthDate)),
-                        gender: formatValue(row.gender),
-                        civilStatus: formatValue(row.civilStatus),
-                        collegeDegree: formatValue(row.collegeDegree),
-                        collegeYearFrom: formatValue(row.collegeYearFrom),
-                        collegeYearTo: formatValue(row.collegeYearTo),
-                        collegeSchool: formatValue(row.collegeSchool),
-                        seniorHighDegree: formatValue(row.seniorHighDegree),
-                        seniorHighYearFrom: formatValue(row.seniorHighYearFrom),
-                        seniorHighYearTo: formatValue(row.seniorHighYearTo),
-                        seniorHighSchool: formatValue(row.seniorHighSchool),
-                        secondaryDegree: formatValue(row.secondaryDegree),
-                        secondaryYearFrom: formatValue(row.secondaryYearFrom),
-                        secondaryYearTo: formatValue(row.secondaryYearTo),
-                        secondarySchool: formatValue(row.secondarySchool),
-                        primarySchool: formatValue(row.primarySchool),
-                        primaryYearFrom: formatValue(row.primaryYearFrom),
-                        primaryYearTo: formatValue(row.primaryYearTo),
-                        primaryDegree: formatValue(row.primaryDegree),
-                        workCompany1: formatValue(row.workCompany1),
-                        workPeriod1: formatValue(row.workPeriod1),
-                        workPosition1: formatValue(row.workPosition1),
-                        workCompany2: formatValue(row.workCompany2),
-                        workPeriod2: formatValue(row.workPeriod2),
-                        workPosition2: formatValue(row.workPosition2),
-                        workCompany3: formatValue(row.workCompany3),
-                        workPeriod3: formatValue(row.workPeriod3),
-                        workPosition3: formatValue(row.workPosition3),
-                        pwd: row.pwd,
-                        iP: row.iP,
-                        victimOfArmedConflict: row.victimOfArmedConflict,
-                        rebelReturnee: row.rebelReturnee,
-                        fourP: row.fourP,
-                        othersDG: formatValue(row.othersDG),
-                        emergencyName: formatValue(row.emergencyName),
-                        emergencyContact: formatValue(row.emergencyContact),
-                        emergencyAddress: formatValue(row.emergencyAddress),
-                        gsisName: formatValue(row.gsisName),
-                        gsisRelationship: formatValue(row.gsisRelationship),
-                        birthCertificate: row.birthCertificate,
-                        transcriptOfRecords: row.transcriptOfRecords,
-                        barangayCertificate: row.barangayCertificate,
-                        form137138: row.form137138,
-                        diploma: row.diploma,
-                        othersD: formatValue(row.othersD),
-                        certificationFromSchool: row.certificationFromSchool,
-                    }}
-                />
+            <DialogContent dividers sx={{ display: "flex", flexDirection: "column", p: 0, overflow: "hidden" }}>
+                {/* Tab Bar */}
+                <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                    <Tabs value={tab} onChange={(_, v) => setTab(v)}>
+                        <Tab label="GIP Form" />
+                        <Tab label="Experience Summary" />
+                    </Tabs>
+                </Box>
+
+                {/* Tab 0: PDF */}
+                <CustomTabPanel value={tab} index={0}>
+
+                    <GIPInfoPDFPreview
+                        data={{
+                            fullName: formatValue(row.name),
+                            address: formatValue(row.address),
+                            contactNumber: formatValue(row.contactNumber),
+                            email: formatValue(row.email),
+                            birthDate: formatValue(formatDate(row.birthDate)),
+                            gender: formatValue(row.gender),
+                            civilStatus: formatValue(row.civilStatus),
+                            collegeDegree: formatValue(row.collegeDegree),
+                            collegeYearFrom: formatValue(row.collegeYearFrom),
+                            collegeYearTo: formatValue(row.collegeYearTo),
+                            collegeSchool: formatValue(row.collegeSchool),
+                            seniorHighDegree: formatValue(row.seniorHighDegree),
+                            seniorHighYearFrom: formatValue(row.seniorHighYearFrom),
+                            seniorHighYearTo: formatValue(row.seniorHighYearTo),
+                            seniorHighSchool: formatValue(row.seniorHighSchool),
+                            secondaryDegree: formatValue(row.secondaryDegree),
+                            secondaryYearFrom: formatValue(row.secondaryYearFrom),
+                            secondaryYearTo: formatValue(row.secondaryYearTo),
+                            secondarySchool: formatValue(row.secondarySchool),
+                            primarySchool: formatValue(row.primarySchool),
+                            primaryYearFrom: formatValue(row.primaryYearFrom),
+                            primaryYearTo: formatValue(row.primaryYearTo),
+                            primaryDegree: formatValue(row.primaryDegree),
+                            workCompany1: formatValue(row.workCompany1),
+                            workPeriod1: formatValue(row.workPeriod1),
+                            workPosition1: formatValue(row.workPosition1),
+                            workCompany2: formatValue(row.workCompany2),
+                            workPeriod2: formatValue(row.workPeriod2),
+                            workPosition2: formatValue(row.workPosition2),
+                            workCompany3: formatValue(row.workCompany3),
+                            workPeriod3: formatValue(row.workPeriod3),
+                            workPosition3: formatValue(row.workPosition3),
+                            pwd: row.pwd,
+                            iP: row.iP,
+                            victimOfArmedConflict: row.victimOfArmedConflict,
+                            rebelReturnee: row.rebelReturnee,
+                            fourP: row.fourP,
+                            othersDG: formatValue(row.othersDG),
+                            emergencyName: formatValue(row.emergencyName),
+                            emergencyContact: formatValue(row.emergencyContact),
+                            emergencyAddress: formatValue(row.emergencyAddress),
+                            gsisName: formatValue(row.gsisName),
+                            gsisRelationship: formatValue(row.gsisRelationship),
+                            birthCertificate: row.birthCertificate,
+                            transcriptOfRecords: row.transcriptOfRecords,
+                            barangayCertificate: row.barangayCertificate,
+                            form137138: row.form137138,
+                            diploma: row.diploma,
+                            othersD: formatValue(row.othersD),
+                            certificationFromSchool: row.certificationFromSchool,
+                        }}
+                    />
+                </CustomTabPanel>
+                {/* Tab 1: Experience Summary — customize freely */}
+                <CustomTabPanel value={tab} index={1}>
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                        <Box>
+                            <GIPExperience name={row.name} excludeId={row.idNumber} />
+                            <Box sx={{ mt: 0.5, fontSize: "1.1rem" }}>{durationTop}</Box>
+                        </Box>
+                        <Box>
+                            <strong>Total GIP Experience</strong>
+                            <Box sx={{ mt: 0.5, fontSize: "1.1rem" }}>{totalExperience}</Box>
+                        </Box>
+                    </Box>
+                </CustomTabPanel>
             </DialogContent>
 
             <DialogActions>

@@ -2,10 +2,9 @@ import React, { useEffect, useState, useCallback } from "react";
 import { db } from "../firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
 import { Typography, Box } from "@mui/material";
-import { format, isValid } from "date-fns";
+import { parse, format, isValid } from "date-fns";
 import { calculateMonthsAndDaysWorked } from "../utils/dateUtils";
 
-// Utility to format months + days nicely
 const formatDuration = ({ months, days }) => {
     let totalMonths = months;
     let totalDays = days;
@@ -24,6 +23,14 @@ const formatDuration = ({ months, days }) => {
     }
 };
 
+const toDate = (dateStr) => {
+    if (!dateStr) return null;
+    const parsed = parse(dateStr, "MMMM d, yyyy", new Date());
+    if (isValid(parsed)) return parsed;
+    const parsed2 = parse(dateStr, "MMM dd, yyyy", new Date());
+    return isValid(parsed2) ? parsed2 : null;
+};
+
 const GIPExperience = ({ name, excludeId }) => {
     const [groupedEntries, setGroupedEntries] = useState({});
 
@@ -37,14 +44,14 @@ const GIPExperience = ({ name, excludeId }) => {
 
         const grouped = {};
         for (const entry of entries) {
-            const dateHired = entry.dateHired ? new Date(entry.dateHired) : null;
-            const year = dateHired && isValid(dateHired) ? dateHired.getFullYear() : "Unknown";
+            const startDate = toDate(entry.startDate);
+            const year = startDate && isValid(startDate) ? startDate.getFullYear() : "Unknown";
             if (!grouped[year]) grouped[year] = [];
             grouped[year].push(entry);
         }
 
         Object.keys(grouped).forEach((year) => {
-            grouped[year].sort((a, b) => new Date(b.dateHired) - new Date(a.dateHired));
+            grouped[year].sort((a, b) => toDate(b.startDate) - toDate(a.startDate));
         });
 
         setGroupedEntries(grouped);
@@ -63,10 +70,12 @@ const GIPExperience = ({ name, excludeId }) => {
             {years.map((year) => {
                 const entries = groupedEntries[year];
 
-                // Calculate total months and days for the year
                 const total = entries.reduce(
                     (acc, entry) => {
-                        const { months, days } = calculateMonthsAndDaysWorked(entry.dateHired, entry.dateEnded);
+                        const { months, days } = calculateMonthsAndDaysWorked(
+                            toDate(entry.startDate),
+                            toDate(entry.endDate),
+                        );
                         acc.months += months;
                         acc.days += days;
                         return acc;
@@ -83,24 +92,26 @@ const GIPExperience = ({ name, excludeId }) => {
                         </Typography>
 
                         {entries.map((entry) => {
-                            const start = new Date(entry.dateHired);
-                            const end = new Date(entry.dateEnded);
-                            const duration = calculateMonthsAndDaysWorked(entry.dateHired, entry.dateEnded);
+                            const start = toDate(entry.startDate);
+                            const end = toDate(entry.endDate);
+                            const duration = calculateMonthsAndDaysWorked(start, end);
                             const durationDisplay = formatDuration(duration);
 
                             return (
                                 <Box key={entry.id} sx={{ pl: 2 }}>
                                     <Typography variant="body2">
-                                        {isValid(start)
+                                        {start && isValid(start)
                                             ? format(start, "MMM d, yyyy").replace(/^([a-zA-Z]+)/, (m) =>
                                                   m.toUpperCase(),
                                               )
                                             : "Invalid"}{" "}
                                         to{" "}
-                                        {isValid(end)
-                                            ? format(end, "MMM d, yyyy").replace(/^([a-zA-Z]+)/, (m) => m.toUpperCase())
+                                        {end && isValid(end)
+                                            ? format(end, "MMM d, yyyy").replace(/^([a-zA-Z]+)/, (m) =>
+                                                  m.toUpperCase(),
+                                              )
                                             : "Invalid"}{" "}
-                                        — LGU: <strong>{entry.lgu || "N/A"}</strong>
+                                        — {durationDisplay} — LGU: <strong>{entry.lgu || "N/A"}</strong>
                                     </Typography>
                                 </Box>
                             );
