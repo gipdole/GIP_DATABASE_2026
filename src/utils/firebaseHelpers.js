@@ -72,8 +72,8 @@ export const deleteEmployee = async (id) => {
 const mapExcelToDatabaseFields = (excelRow) => {
   const fieldMap = {
     'Full Name': 'name',
-    'Start Date': 'startDate',
-    'End Date': 'endDate',
+    'Start Date': 'dateHired',
+    'End Date': 'dateEnded',
     'Months Worked': 'monthsWorked',
     'Birth Date': 'birthDate',
     'GIP ID': 'gipId',

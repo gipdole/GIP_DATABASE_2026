@@ -441,17 +441,17 @@ export const getAllColumns = ({
     },
 
     {
-      accessorKey: 'startDate',
+      accessorKey: 'dateHired',
       header: 'Start Date',
       size: 110,
       enableColumnFilter: false,
       muiTableHeadCellProps: { sx: headerSx },
       muiTableBodyCellProps: { sx: { pl: 1.5 } },
-      Cell: ({ row }) => formatDate(row.original.startDate),
+      Cell: ({ row }) => formatDate(row.original.dateHired),
       sortingFn: (rowA, rowB) => {
         const a = rowA.original;
         const b = rowB.original;
-        const dateCompare = new Date(b.startDate) - new Date(a.startDate);
+        const dateCompare = new Date(b.dateHired) - new Date(a.dateHired);
         if (dateCompare !== 0) return dateCompare;
         const lguCompare = getLguOrderIndex(a.lgu) - getLguOrderIndex(b.lgu);
         if (lguCompare !== 0) return lguCompare;
@@ -459,12 +459,12 @@ export const getAllColumns = ({
       },
     },
     {
-      accessorKey: 'endDate',
+      accessorKey: 'dateEnded',
       header: 'End Date',
       size: 110,
       enableColumnFilter: false,
       muiTableHeadCellProps: { sx: headerSx },
-      Cell: ({ row }) => formatDate(row.original.endDate),
+      Cell: ({ row }) => formatDate(row.original.dateEnded),
     },
 
     { accessorKey: 'assignmentPlace', header: 'Place of Assignment', size: 140, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.assignmentPlace || 'N/A' },

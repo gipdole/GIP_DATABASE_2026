@@ -43,14 +43,14 @@ const GIPExperience = ({ name, excludeId }) => {
 
         const grouped = {};
         for (const entry of entries) {
-            const startDate = toDate(entry.startDate);
-            const year = startDate && isValid(startDate) ? startDate.getFullYear() : "Unknown";
+            const dateHired = toDate(entry.dateHired);
+            const year = dateHired && isValid(dateHired) ? dateHired.getFullYear() : "Unknown";
             if (!grouped[year]) grouped[year] = [];
             grouped[year].push(entry);
         }
 
         Object.keys(grouped).forEach((year) => {
-            grouped[year].sort((a, b) => toDate(b.startDate) - toDate(a.startDate));
+            grouped[year].sort((a, b) => toDate(b.dateHired) - toDate(a.dateHired));
         });
 
         setGroupedEntries(grouped);
@@ -72,8 +72,8 @@ const GIPExperience = ({ name, excludeId }) => {
                 const total = entries.reduce(
                     (acc, entry) => {
                         const { months, days } = calculateMonthsAndDaysWorked(
-                            toDate(entry.startDate),
-                            toDate(entry.endDate),
+                            toDate(entry.dateHired),
+                            toDate(entry.dateEnded),
                         );
                         acc.months += months;
                         acc.days += days;
@@ -88,11 +88,11 @@ const GIPExperience = ({ name, excludeId }) => {
                             {year} — <strong>{formatDuration(total)}</strong>
                         </Typography>
 
-                        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                            {entries.map((entry) => {
-                                const start = toDate(entry.startDate);
-                                const end = toDate(entry.endDate);
-                                const durationDisplay = formatDuration(calculateMonthsAndDaysWorked(start, end));
+                        {entries.map((entry) => {
+                            const start = toDate(entry.dateHired);
+                            const end = toDate(entry.dateEnded);
+                            const duration = calculateMonthsAndDaysWorked(start, end);
+                            const durationDisplay = formatDuration(duration);
 
                                 return (
                                     <Box key={entry.id} sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
