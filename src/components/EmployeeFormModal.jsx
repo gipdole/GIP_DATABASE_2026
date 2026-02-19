@@ -24,8 +24,8 @@ import { calculateMonthsWorked } from "../utils/dateUtils";
 const defaultForm = {
     name: "",
     gipId: "",
-    startDate: "",
-    endDate: "",
+    dateHired: "",
+    dateEnded: "",
     monthsWorked: "",
     birthDate: "",
     placeOfBirth: "",
@@ -202,10 +202,10 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
             if (form.gipId?.trim()) return;
 
             // ❌ If missing required data
-            if (!form.name?.trim() || !form.startDate) return;
+            if (!form.name?.trim() || !form.dateHired) return;
 
             try {
-                const generated = await generateNextGipId(form.name.trim(), form.startDate);
+                const generated = await generateNextGipId(form.name.trim(), form.dateHired);
 
                 setForm((prev) => ({
                     ...prev,
@@ -217,7 +217,7 @@ const EmployeeFormModal = ({ open, onClose, mode, employee = null, refresh }) =>
         };
 
         autoGenerateGipId();
-    }, [form.name, form.startDate, isEditMode]);
+    }, [form.name, form.dateHired, isEditMode]);
 
     // Handlers
     const handleChange = (e) => {

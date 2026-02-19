@@ -38,7 +38,7 @@ const drawWrappedText = (page, text, x, y, { font, size, maxWidth = 150, lineHei
  */
 export const fillPdf = async (
     pdfBytes,
-    { name, startDate, endDate, assignmentPlace, address, validId, validIdIssued },
+    { name, dateHired, dateEnded, assignmentPlace, address, validId, validIdIssued },
 ) => {
     const pdfDoc = await PDFDocument.load(pdfBytes);
     const pages = pdfDoc.getPages();
@@ -49,8 +49,8 @@ export const fillPdf = async (
     const firstPage = pages[0];
     drawWrappedText(firstPage, name, 45, 530, { font, size: fontSize, maxWidth: 150 });
     drawWrappedText(firstPage, address || "", 187, 537, { font, size: 8, maxWidth: 80 });
-    drawWrappedText(firstPage, startDate, 280, 530, { font, size: fontSize });
-    drawWrappedText(firstPage, endDate, 340, 530, { font, size: fontSize });
+    drawWrappedText(firstPage, dateHired, 280, 530, { font, size: fontSize });
+    drawWrappedText(firstPage, dateEnded, 340, 530, { font, size: fontSize });
     drawWrappedText(firstPage, assignmentPlace || "", 400, 537, { font, size: 8, maxWidth: 80 });
 
     // Page 2: signatory name

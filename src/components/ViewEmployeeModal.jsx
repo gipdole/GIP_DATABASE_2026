@@ -80,15 +80,15 @@ const ViewEmployeeModal = ({ open, onClose, row, allRows }) => {
 
     const durationTop = useMemo(() => {
         if (!row) return "";
-        return formatDuration(calculateMonthsAndDaysWorked(toDate(row.startDate), toDate(row.endDate)));
-    }, [row?.startDate, row?.endDate]);
+        return formatDuration(calculateMonthsAndDaysWorked(toDate(row.dateHired), toDate(row.dateEnded)));
+    }, [row?.dateHired, row?.dateEnded]);
 
     const totalExperience = useMemo(() => {
         if (!row) return "";
         const entries = allRows.filter((r) => r.name?.toLowerCase().trim() === row.name?.toLowerCase().trim());
         const total = entries.reduce(
             (acc, entry) => {
-                const { months, days } = calculateMonthsAndDaysWorked(toDate(entry.startDate), toDate(entry.endDate));
+                const { months, days } = calculateMonthsAndDaysWorked(toDate(entry.dateHired), toDate(entry.dateEnded));
                 acc.months += months;
                 acc.days += days;
                 return acc;
