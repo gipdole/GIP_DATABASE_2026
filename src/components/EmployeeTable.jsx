@@ -2,253 +2,247 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { Box, Button, CircularProgress } from "@mui/material";
 import { MaterialReactTable, useMaterialReactTable } from "material-react-table";
 
-import { getEmployees, deleteEmployee, uploadEmployeesFromExcel } from "../utils/firebaseHelpers";
+import {
+  getEmployees,
+  deleteEmployee,
+  uploadEmployeesFromExcel,
+} from "../utils/firebaseHelpers";
 
 import { getAllColumns } from "../utils/columns";
 import EmployeeFormModal from "./EmployeeFormModal";
 import ViewEmployeeModal from "./ViewEmployeeModal";
-
 import { exportTableToExcel } from "../utils/excel";
 
 const lguPriority = [
-    "baguio city",
-    "atok",
-    "bakun",
-    "benguet",
-    "bokod",
-    "buguias",
-    "itogon",
-    "kabayan",
-    "kapangan",
-    "kibungan",
-    "mankayan",
-    "sablan",
-    "tuba",
-    "tublay",
+  "baguio city",
+  "atok",
+  "bakun",
+  "benguet",
+  "bokod",
+  "buguias",
+  "itogon",
+  "kabayan",
+  "kapangan",
+  "kibungan",
+  "mankayan",
+  "sablan",
+  "tuba",
+  "tublay",
 ];
 
-const lguSortFn = (rowA, rowB, columnId) => {
-    const a = (rowA.getValue(columnId) || "").toLowerCase();
-    const b = (rowB.getValue(columnId) || "").toLowerCase();
-    const indexA = lguPriority.indexOf(a);
-    const indexB = lguPriority.indexOf(b);
-    if (indexA === -1 && indexB === -1) return a.localeCompare(b);
-    if (indexA === -1) return 1;
-    if (indexB === -1) return -1;
-    return indexA - indexB;
-};
-
-const dateSortFn = (rowA, rowB, columnId) => {
-    const dateA = new Date(rowA.getValue(columnId));
-    const dateB = new Date(rowB.getValue(columnId));
-    return dateA - dateB;
-};
-
 const EmployeeTable = () => {
-    const [employees, setEmployees] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [viewRow, setViewRow] = useState(null);
-    const [editRow, setEditRow] = useState(null);
-    const [formMode, setFormMode] = useState(null);
+  const [employees, setEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [viewRow, setViewRow] = useState(null);
+  const [editRow, setEditRow] = useState(null);
+  const [formMode, setFormMode] = useState(null);
 
-    const fetchEmployees = useCallback(async () => {
-        setLoading(true);
-        const data = await getEmployees();
-        const sorted = [...data].sort((a, b) => {
-            const dateDiff = new Date(a.dateHired) - new Date(b.dateHired);
-            if (dateDiff !== 0) return dateDiff;
-            const indexA = lguPriority.indexOf((a.lgu || "").toLowerCase());
-            const indexB = lguPriority.indexOf((b.lgu || "").toLowerCase());
-            if (indexA !== indexB) return indexA - indexB;
-            return (a.name || "").localeCompare(b.name || "");
-        });
-        setEmployees(sorted);
-        setLoading(false);
-    }, []);
+  // ✅ Fetch Employees (NO manual sorting — MRT handles it)
+  const fetchEmployees = useCallback(async () => {
+    setLoading(true);
+    const data = await getEmployees();
+    setEmployees(data);
+    setLoading(false);
+  }, []);
 
-    useEffect(() => {
+  useEffect(() => {
+    fetchEmployees();
+  }, [fetchEmployees]);
+
+  // ✅ Memoized Data (important for performance)
+  const memoData = useMemo(() => employees, [employees]);
+
+  // Handlers (memoized to prevent re-renders)
+  const handleView = useCallback((row) => setViewRow(row), []);
+  const handleEdit = useCallback((row) => {
+    setEditRow(row);
+    setFormMode("edit");
+  }, []);
+  const handleAdd = useCallback(() => {
+    setEditRow(null);
+    setFormMode("add");
+  }, []);
+  const handleCloseForm = useCallback(() => {
+    setEditRow(null);
+    setFormMode(null);
+  }, []);
+
+  const handleDelete = useCallback(
+    async (id) => {
+      await deleteEmployee(id);
+      fetchEmployees();
+    },
+    [fetchEmployees]
+  );
+
+  const handleImportExcel = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setLoading(true);
+    await uploadEmployeesFromExcel(file, fetchEmployees);
+    setLoading(false);
+  };
+
+  // Columns
+  const columns = useMemo(
+    () =>
+      getAllColumns({
+        onView: handleView,
+        onEdit: handleEdit,
+        onDelete: handleDelete,
+      }),
+    [handleView, handleEdit, handleDelete]
+  );
+
+  const table = useMaterialReactTable({
+    columns,
+    data: memoData,
+
+    // 🔥 PERFORMANCE SETTINGS
+    enableRowVirtualization: true,
+    layoutMode: "grid-no-grow",
+
+    enablePagination: true,
+    enableSorting: true,
+    enableStickyHeader: true,
+    enableRowSelection: true,
+    enableColumnPinning: true,
+    enableColumnResizing: true,
+
+
+    initialState: {
+      density: "compact",
+      columnPinning: {
+        left: ["mrt-row-select", "actions", "rowNumber", "name", "gipId"],
+        right: ["generateContract"],
+      },
+      sorting: [
+        { id: "dateHired", desc: true },
+        { id: "lgu", desc: false },
+        { id: "name", desc: false },
+      ],
+    },
+
+    // 🔥 Custom LGU Sorting (priority-based)
+    sortingFns: {
+      lguPriority: (rowA, rowB, columnId) => {
+        const a = (rowA.getValue(columnId) || "").toLowerCase();
+        const b = (rowB.getValue(columnId) || "").toLowerCase();
+
+        const indexA = lguPriority.indexOf(a);
+        const indexB = lguPriority.indexOf(b);
+
+        if (indexA === -1 && indexB === -1) return a.localeCompare(b);
+        if (indexA === -1) return 1;
+        if (indexB === -1) return -1;
+
+        return indexA - indexB;
+      },
+    },
+
+    muiTableContainerProps: {
+      sx: {
+        height: "calc(100vh - 230px)",
+      },
+    },
+
+    // 🔥 Fixed height cells (better for virtualization)
+    muiTableBodyCellProps: {
+      sx: {
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        py: 0.5,
+      },
+    },
+
+    renderTopToolbarCustomActions: ({ table }) => {
+      const selectedRows = table.getSelectedRowModel().rows;
+      const hasSelected = selectedRows.length > 0;
+
+      const handleDeleteSelected = async () => {
+        if (!window.confirm(`Delete ${selectedRows.length} selected employee(s)?`))
+          return;
+
+        await Promise.all(
+          selectedRows.map((row) => deleteEmployee(row.original.id))
+        );
+
+        table.resetRowSelection();
         fetchEmployees();
-    }, [fetchEmployees]);
+      };
 
-    const handleView = (row) => setViewRow(row);
-    const handleEdit = (row) => {
-        setEditRow(row);
-        setFormMode("edit");
-    };
-    const handleAdd = () => {
-        setEditRow(null);
-        setFormMode("add");
-    };
-    const handleDelete = async (id) => {
-        await deleteEmployee(id);
-        await fetchEmployees();
-    };
-    const handleCloseForm = () => {
-        setEditRow(null);
-        setFormMode(null);
-    };
+      const handleExportSelectedExcel = () => {
+        const selected = selectedRows.map((row) => row.original);
+        if (!selected.length) return alert("No rows selected");
+        exportTableToExcel(selected);
+      };
 
-    const handleImportExcel = async (e) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-        await uploadEmployeesFromExcel(file, fetchEmployees);
-    };
+      return (
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <Button size="small" variant="contained" onClick={handleAdd}>
+            Add
+          </Button>
 
-    const handleExportSelectedExcel = () => {
-        exportTableToExcel(table);
-    };
+          <Button size="small" variant="outlined" component="label">
+            Import
+            <input
+              type="file"
+              hidden
+              accept=".xlsx, .xls"
+              onChange={handleImportExcel}
+            />
+          </Button>
 
-    const columns = useMemo(
-        () => getAllColumns({ onView: handleView, onEdit: handleEdit, onDelete: handleDelete }),
-        [handleView, handleEdit, handleDelete],
-    );
+          <Button size="small" variant="outlined" onClick={handleExportSelectedExcel}>
+            Export Selected
+          </Button>
 
-    const table = useMaterialReactTable({
-        columns,
-        data: employees,
-        enablePagination: false,
-        enableSorting: true,
-        enableStickyHeader: true,
-        enableStickyFooter: false,
-        enableRowSelection: true,
-        enableColumnPinning: true,
-        enableColumnResizing: true,
-        renderBottomToolbar: false,
-        renderTopToolbarCustomActions: () => {
-            const selectedRows = table.getSelectedRowModel().rows;
-            const hasSelected = selectedRows.length > 0;
-
-            const handleDeleteSelected = async () => {
-                if (!window.confirm(`Delete ${selectedRows.length} selected employee(s)?`)) return;
-                await Promise.all(selectedRows.map((row) => deleteEmployee(row.original.id)));
-                table.resetRowSelection(); // clear checkboxes
-                await fetchEmployees();
-            };
-
-            return (<Box sx={{ display: "flex", gap: 1, px: 0.5 }}>
-                <Button
-                    size="small"
-                    variant="contained"
-                    sx={{ backgroundColor: "#55C386", color: "#000000" }}
-                    onClick={handleAdd}
-                >
-                    Add
-                </Button>
-                <Button
-                    size="small"
-                    variant="outlined"
-                    component="label"
-                    sx={{
-                        borderColor: "#55C386",
-                        color: "#55C386",
-                        "&:hover": {
-                            borderColor: "#2E7D32",
-                            backgroundColor: "rgba(85,195,134,0.08)",
-                        },
-                    }}
-                >
-                    Import
-                    <input type="file" hidden accept=".xlsx, .xls" onChange={handleImportExcel} />
-                </Button>
-
-                <Button
-                    size="small"
-                    variant="outlined"
-                    onClick={handleExportSelectedExcel}
-                    sx={{
-                        borderColor: "#55C386",
-                        color: "#55C386",
-                        "&:hover": {
-                            borderColor: "#2E7D32",
-                            backgroundColor: "rgba(85,195,134,0.08)",
-                        },
-                    }}
-                >
-                    Export
-                </Button>
-                <Button
-                    size="small"
-                    variant="outlined"
-                    onClick={handleDeleteSelected}
-                    disabled={!hasSelected}
-                    sx={{
-                        borderColor: "#e53935",
-                        color: "#e53935",
-                        "&:hover": {
-                            borderColor: "#b71c1c",
-                            backgroundColor: "rgba(229,57,53,0.08)",
-                        },
-                        "&:disabled": { borderColor: "#ccc", color: "#ccc" },
-                    }}
-                >
-                    Delete Selected ({selectedRows.length})
-                </Button>
-            </Box>
-            );
-        },
-        customSortingFns: { lguSort: lguSortFn, dateAsc: dateSortFn },
-        initialState: {
-            density: "compact",
-            columnPinning: {
-                left: ["mrt-row-select", "actions", "rowNumber", "name", "gipId"],
-                right: ["generateContract"],
-            },
-            sorting: [
-                { id: "dateHired", desc: false },
-                { id: "lgu", desc: false },
-                { id: "name", desc: false },
-            ],
-        },
-
-        muiTableContainerProps: {
-            sx: {
-                height: "calc(105vh - 180px)",
-                overflow: "auto",
-                padding: 0,
-                margin: 0,
-                borderWidth: "1px",
-                borderColor: "#ddd",
-            },
-        },
-        muiTablePaperProps: {
-            sx: {
-                boxShadow: "none",
-                borderRadius: 0,
-                border: "1px solid #ccc",
-            },
-        },
-        muiTableBodyCellProps: ({ column }) => ({
-            sx: column.id === "mrt-row-select" ? { px: -5, py: 0.1 } : { px: -5, py: 0.1 },
-        }),
-        muiTableHeadCellProps: ({ column }) => ({
-            sx: column.id === "mrt-row-select" ? { px: -5, py: 0.1 } : { px: -5, py: 0.1, fontSize: "1rem" },
-        }),
-    });
-
-    return (
-        <Box sx={{ p: 1 }}>
-            {loading ? (
-                <Box textAlign="center" py={4}>
-                    <CircularProgress size={24} />
-                </Box>
-            ) : (
-                <MaterialReactTable table={table} />
-                // <GIPTable />
-            )}
-
-            <ViewEmployeeModal open={!!viewRow} onClose={() => setViewRow(null)} row={viewRow} allRows={employees} />
-            {!!formMode && (
-                <EmployeeFormModal
-                    open={true}
-                    onClose={handleCloseForm}
-                    employee={editRow}
-                    existingEmployees={employees}
-                    refresh={fetchEmployees}
-                    mode={formMode}
-                />
-            )}
+          {hasSelected && (
+            <Button
+              size="small"
+              variant="contained"
+              color="error"
+              onClick={handleDeleteSelected}
+            >
+              Delete Selected
+            </Button>
+          )}
         </Box>
-    );
+      );
+    },
+  });
+
+  return (
+    <Box sx={{ p: 1 }}>
+      {loading ? (
+        <Box textAlign="center" py={4}>
+          <CircularProgress size={24} />
+        </Box>
+      ) : (
+        <MaterialReactTable table={table} />
+      )}
+
+      <ViewEmployeeModal
+        open={!!viewRow}
+        onClose={() => setViewRow(null)}
+        row={viewRow}
+        allRows={employees}
+      />
+
+      {!!formMode && (
+        <EmployeeFormModal
+          open
+          onClose={handleCloseForm}
+          employee={editRow}
+          existingEmployees={employees}
+          refresh={fetchEmployees}
+          mode={formMode}
+        />
+      )}
+    </Box>
+  );
 };
 
 export default EmployeeTable;

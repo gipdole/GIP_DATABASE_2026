@@ -3,61 +3,73 @@ import IconButton from "@mui/material/IconButton";
 import { Box } from "@mui/material";
 import FillAndDownloadContract from "../components/FillAndDownloadContract";
 
-export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete = () => {} } = {}) => {
-    const LGU_ORDER = [
-        "BAGUIO CITY",
-        "ATOK",
-        "BAKUN",
-        "BENGUET",
-        "BOKOD",
-        "BUGUIAS",
-        "ITOGON",
-        "KABAYAN",
-        "KAPANGAN",
-        "KIBUNGAN",
-        "MANKAYAN",
-        "LA TRINIDAD",
-        "SABLAN",
-        "TUBA",
-        "TUBLAY",
-    ];
+export const getAllColumns = ({
+  onView = () => {},
+  onEdit = () => {},
+  onDelete = () => {},
+} = {}) => {
+
+  const LGU_ORDER = [
+    "BAGUIO CITY",
+    "ATOK",
+    "BAKUN",
+    "BENGUET",
+    "BOKOD",
+    "BUGUIAS",
+    "ITOGON",
+    "KABAYAN",
+    "KAPANGAN",
+    "KIBUNGAN",
+    "MANKAYAN",
+    "LA TRINIDAD",
+    "SABLAN",
+    "TUBA",
+    "TUBLAY",
+  ];
+
 
     const getLguOrderIndex = (lgu = "") => {
-        const upper = lgu.toUpperCase();
-        const index = LGU_ORDER.indexOf(upper);
-        return index === -1 ? LGU_ORDER.length : index;
+      const upper = lgu.toUpperCase();
+      const index = LGU_ORDER.indexOf(upper);
+      return index === -1 ? LGU_ORDER.length : index;
     };
 
-    const compareStrings = (a = "", b = "") => a.toLowerCase().localeCompare(b.toLowerCase());
+    const compareStrings = (a = "", b = "") =>
+      a.toLowerCase().localeCompare(b.toLowerCase());
 
-    const formatDate = (dateStr) =>
-        dateStr
-            ? new Date(dateStr)
-                  .toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "2-digit",
-                  })
-                  .toUpperCase()
-            : "N/A";
 
-    const headerSx = { fontSize: "0.75rem", px: 1, py: 0.5 };
+  const formatDate = (dateStr) =>
+    dateStr
+      ? new Date(dateStr)
+          .toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "2-digit",
+          })
+          .toUpperCase()
+      : "N/A";
+
+  const headerSx = { fontSize: "0.75rem", px: 1, py: 0.5 };
 
   return [
+   // ========================
+    // ACTIONS COLUMN
+    // ========================
     {
-      id: 'actions',
-      header: 'Actions',
+      id: "actions",
+      header: "Actions",
       size: 100,
       enableColumnPinning: true,
       enableSorting: false,
       enableResizing: false,
       enableColumnFilter: false,
+      
       muiTableBodyCellProps: { sx: { pl: 0, pr: 0, py: 0 } },
-      muiTableHeadCellProps: { sx: { pl: 1, pr: 0, py: 0, fontSize: '0.75rem' } },
+      muiTableHeadCellProps: { sx: { fontSize: "0.75rem" } },
       Cell: ({ row }) => {
         const employee = row.original;
         return (
-          <Box sx={{ display: 'flex', gap: 0 }}>
+          <Box sx={{ display: "flex" }}>
             <IconButton onClick={() => onView(employee)} size="small" color="success">
               <Visibility fontSize="small" />
             </IconButton>
@@ -71,17 +83,22 @@ export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete =
         );
       },
     },
+
+    // ========================
+    // ROW NUMBER
+    // ========================
     {
-      id: 'rowNumber',
-      header: 'ID',
-      size: 44,
+      id: "rowNumber",
+      header: "ID",
+      size: 50,
       enableColumnPinning: true,
       enableSorting: true,
-      enableColumnFilter: true,
-      muiTableHeadCellProps: { sx: { fontSize: '0.75rem', px: 0.5, py: 0.25 } },
-      muiTableBodyCellProps: { sx: { px: 0.5, py: 0.25 } },
+      enableColumnFilter: false,
+      muiTableHeadCellProps: { sx: headerSx },
       Cell: ({ table, row }) => {
-        const rowIndex = table.getSortedRowModel().rows.findIndex(r => r.id === row.id);
+        const rowIndex = table
+          .getSortedRowModel()
+          .rows.findIndex((r) => r.id === row.id);
         return rowIndex + 1;
       },
     },
@@ -89,7 +106,7 @@ export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete =
     {
       accessorKey: 'gipId',
       header: 'GIP ID',
-      size: 120,
+      size: 150,
       enableColumnPinning: true,
       muiTableHeadCellProps: { sx: headerSx },
       Cell: ({ row }) => row.original.gipId?.toUpperCase() || 'N/A',
@@ -98,19 +115,19 @@ export const getAllColumns = ({ onView = () => {}, onEdit = () => {}, onDelete =
     {
       accessorKey: 'name',
       header: 'Full Name',
-      size: 180,
+      size: 200,
       enableColumnPinning: true,
       muiTableHeadCellProps: { sx: headerSx },
       sortingFn: (rowA, rowB) => compareStrings(rowA.original.name, rowB.original.name),
       Cell: ({ row }) => row.original.name?.toUpperCase() || 'N/A',
     },
 
-    { accessorKey: 'address', header: 'Address', size: 200, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.address || 'N/A' },
+    { accessorKey: 'address', header: 'Address', size: 290, muiTableHeadCellProps: { sx: headerSx }, Cell: ({ row }) => row.original.address || 'N/A' },
 
     {
       accessorKey: 'birthDate',
       header: 'Birth Date',
-      size: 90,
+      size: 105,
       enableColumnFilter: false,
       muiTableHeadCellProps: { sx: headerSx },
       Cell: ({ row }) => formatDate(row.original.birthDate),
