@@ -105,8 +105,8 @@ const ViewEmployeeModal = ({ open, onClose, row, allRows }) => {
 
     const formatDate = (dateStr) => {
         if (!dateStr) return "N/A";
-        const parsed = parseISO(dateStr);
-        return isValid(parsed) ? format(parsed, "MMM dd, yyyy").toUpperCase() : "Invalid";
+        const parsed = toDate(dateStr); // ← use toDate instead of parseISO
+        return parsed && isValid(parsed) ? format(parsed, "MMM dd, yyyy").toUpperCase() : "Invalid";
     };
 
     // const renderValue = (label, value) => {
@@ -219,85 +219,6 @@ const ViewEmployeeModal = ({ open, onClose, row, allRows }) => {
                             </Box>
 
                             <GIPExperience name={row.name} excludeId={row.idNumber} />
-                        </Box>
-
-                        <Card>
-                            <CardHeader
-                                sx={{ fontWeight: 'bold', textAlign: 'center' }}
-                                title='Experience Summary'
-                            />
-                            <CardContent>
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12} size={4}>
-                                        <Card>
-                                            <CardHeader sx={{
-                                                p: 3,
-                                                borderRadius: 3,
-                                                background: "linear-gradient(135deg, #55C386 0%, #3FA76A 100%)",
-                                                color: "#fff",
-                                                boxShadow: "0 6px 25px rgba(85,195,134,0.35)", textAlign: 'center'
-                                            }} title='Total GIP Experience' />
-                                            <CardContent>
-
-                                            </CardContent>
-                                        </Card>
-                                    </Grid>
-                                    <Grid item xs={12} size={4}>
-                                        <Card>
-                                            <CardHeader sx={{
-                                                p: 3,
-                                                borderRadius: 3,
-                                                background: "linear-gradient(135deg, #55C386 0%, #3FA76A 100%)",
-                                                color: "#fff",
-                                                boxShadow: "0 6px 25px rgba(85,195,134,0.35)", textAlign: 'center'
-                                            }} title='Employment Duration' />
-                                            <CardContent>
-
-                                            </CardContent>
-                                        </Card>
-                                    </Grid>
-                                    <Grid item xs={12} size={4}>
-                                        <Card>
-                                            <CardHeader sx={{
-                                                p: 3,
-                                                borderRadius: 3,
-                                                background: "linear-gradient(135deg, #55C386 0%, #3FA76A 100%)",
-                                                color: "#fff",
-                                                boxShadow: "0 6px 25px rgba(85,195,134,0.35)", textAlign: 'center'
-                                            }} title='Local Government Unit' />
-                                            <CardContent>
-
-                                            </CardContent>
-                                        </Card>
-                                    </Grid>
-                                </Grid>
-                            </CardContent>
-                        </Card>
-
-                        {/* Total Experience Highlight */}
-                        <Box
-                            sx={{
-                                p: 3,
-                                borderRadius: 3,
-                                background: "linear-gradient(135deg, #55C386 0%, #3FA76A 100%)",
-                                color: "#fff",
-                                boxShadow: "0 6px 25px rgba(85,195,134,0.35)",
-                            }}
-                        >
-                            <Box sx={{ fontSize: "1.25rem", opacity: 0.9 }}>
-                                Total GIP Experience
-                            </Box>
-
-                            <Box
-                                sx={{
-                                    fontSize: "1.8rem",
-                                    fontWeight: 700,
-                                    mt: 1,
-                                    letterSpacing: 1,
-                                }}
-                            >
-                                {totalExperience}
-                            </Box>
                         </Box>
 
                     </Box>

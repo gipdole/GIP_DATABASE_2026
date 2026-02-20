@@ -84,10 +84,6 @@ const GIPExperience = ({ name, excludeId }) => {
 
                 return (
                     <Box key={year} mb={2}>
-                        <Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 1 }}>
-                            {year} — <strong>{formatDuration(total)}</strong>
-                        </Typography>
-
                         {entries.map((entry) => {
                             const start = toDate(entry.dateHired);
                             const end = toDate(entry.dateEnded);
@@ -95,18 +91,19 @@ const GIPExperience = ({ name, excludeId }) => {
                             const durationDisplay = formatDuration(duration);
 
                             return (
-                                <Box key={entry.id} sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
+                                <Box key={entry.id} sx={{ display: "flex", flexDirection: "row", gap: 3, mb: 3, }}>
                                     <Card sx={{ flex: 1 }}>
                                         <CardHeader sx={{
-                                            p: 3,
+                                            px: 3,
+                                            py: 1,
                                             borderTopLeftRadius: 3,
                                             borderTopRightRadius: 3,
                                             background: "linear-gradient(135deg, #55C386 0%, #3FA76A 100%)",
                                             color: "#fff",
                                             boxShadow: "0 6px 25px rgba(85,195,134,0.35)", textAlign: 'center'
                                         }} title='Total GIP Experience' />
-                                        <CardContent sx={{ py: 1, "&:last-child": { pb: 1 } }}>
-                                            <Typography variant="body2">
+                                        <CardContent sx={{ py: 1, "&:last-child": { pb: 1, textAlign: "center" } }}>
+                                            <Typography variant="h6">
                                                 {start && isValid(start)
                                                     ? format(start, "MMM d, yyyy").replace(/^([a-zA-Z]+)/, (m) => m.toUpperCase())
                                                     : "Invalid"}{" "}
@@ -119,7 +116,8 @@ const GIPExperience = ({ name, excludeId }) => {
                                     </Card>
                                     <Card sx={{ flex: 1 }}>
                                         <CardHeader sx={{
-                                            p: 3,
+                                            px: 3,
+                                            py: 1,
                                             borderTopLeftRadius: 3,
                                             borderTopRightRadius: 3,
                                             background: "linear-gradient(135deg, #55C386 0%, #3FA76A 100%)",
@@ -127,8 +125,8 @@ const GIPExperience = ({ name, excludeId }) => {
                                             boxShadow: "0 6px 25px rgba(85,195,134,0.35)", textAlign: 'center'
                                         }} title='Employment Duration' />
                                         <CardContent sx={{ py: 1, "&:last-child": { pb: 1 } }}>
-                                            <CardContent sx={{ py: 1, "&:last-child": { pb: 1 } }}>
-                                                <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                                            <CardContent sx={{ py: 1, "&:last-child": { pb: 1 }, textAlign: "center" }}>
+                                                <Typography variant="h6" sx={{ fontWeight: "normal" }}>
                                                     {durationDisplay}
                                                 </Typography>
                                             </CardContent>
@@ -136,15 +134,16 @@ const GIPExperience = ({ name, excludeId }) => {
                                     </Card>
                                     <Card sx={{ flex: 1 }}>
                                         <CardHeader sx={{
-                                            p: 3,
+                                            px: 3,
+                                            py: 1,
                                             borderTopLeftRadius: 3,
                                             borderTopRightRadius: 3,
                                             background: "linear-gradient(135deg, #55C386 0%, #3FA76A 100%)",
                                             color: "#fff",
                                             boxShadow: "0 6px 25px rgba(85,195,134,0.35)", textAlign: 'center'
-                                        }} title='Employment Duration' />
-                                        <CardContent sx={{ py: 1, "&:last-child": { pb: 1 } }}>
-                                            <Typography variant="body2">
+                                        }} title='Place of Employment' />
+                                        <CardContent sx={{ py: 1, "&:last-child": { pb: 1 }, textAlign: "center" }}>
+                                            <Typography variant="h6">
                                                 LGU: <strong>{entry.lgu || "N/A"}</strong>
                                             </Typography>
                                         </CardContent>
@@ -152,6 +151,9 @@ const GIPExperience = ({ name, excludeId }) => {
                                 </Box>
                             );
                         })}
+                        <Typography variant="h5" sx={{ fontWeight: "normal", mb: 1, textAlign: "center" }}>
+                            {year} — Total: <strong>{formatDuration(total)}</strong>
+                        </Typography>
                     </Box>
                 );
             })}
